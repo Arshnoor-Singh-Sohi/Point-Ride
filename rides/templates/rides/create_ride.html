@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Create Ride - pointRide{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <h1>Create New Ride</h1>
+    <p>Create a new ride offering (Template created - functionality coming soon)</p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label>Pickup City</label>
+            <select name="pickup_city" class="form-control">
+                <option value="">Select pickup city</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label>Drop-off City</label>
+            <select name="dropoff_city" class="form-control">
+                <option value="">Select drop-off city</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label>Price per Seat</label>
+            <input type="number" name="price_per_seat" class="form-control" step="0.01">
+        </div>
+        <button type="submit" class="btn btn-primary">Create Ride</button>
+    </form>
+    <a href="{% url 'accounts:driver_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+</div>
+{% endblock %}

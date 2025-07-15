@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Route Map - pointRide{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <h1>Route Map</h1>
+    <p>Interactive route map will be displayed here</p>
+    <p>This connects to your teammate's map functionality</p>
+    <div id="map-container" style="height: 400px; background: #f8f9fa; border: 1px solid #dee2e6;">
+        <div class="d-flex align-items-center justify-content-center h-100">
+            <p class="text-muted">Map interface loading...</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

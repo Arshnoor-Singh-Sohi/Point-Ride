@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Find Rides - pointRide{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <h1>Find Your Ride</h1>
+    <p>Search for available rides (Template created - functionality coming soon)</p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label>Pickup Location</label>
+            <input type="text" name="pickup_location" class="form-control" placeholder="Enter pickup location">
+        </div>
+        <div class="mb-3">
+            <label>Drop-off Location</label>
+            <input type="text" name="dropoff_location" class="form-control" placeholder="Enter drop-off location">
+        </div>
+        <button type="submit" class="btn btn-primary">Search Rides</button>
+    </form>
+</div>
+{% endblock %}

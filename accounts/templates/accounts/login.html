@@ -15,6 +15,21 @@
                 <div class="card-body p-4 p-md-5">
                     <p class="text-center text-muted mb-4">Choose your role and log in to pointRide</p>
 
+                    {# MODIFIED BLOCK TO DISPLAY ONLY ERROR MESSAGES #}
+                    {% if messages %}
+                        <div class="messages-container mb-3">
+                            {% for message in messages %}
+                                {% if message.tags == 'error' %} {# Check if the message is tagged as 'error' #}
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    {# END OF MODIFIED BLOCK #}
+
                     <form method="post" id="loginForm">
                         {% csrf_token %}
 
