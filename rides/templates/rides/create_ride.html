@@ -1,29 +1,77 @@
 {% extends 'base.html' %}
-{% block title %}Create Ride - pointRide{% endblock %}
+
+{% block title %}Create Ride{% endblock %}
+
 {% block content %}
 <div class="container py-5">
     <h1>Create New Ride</h1>
-    <p>Create a new ride offering (Template created - functionality coming soon)</p>
+    
     <form method="post">
         {% csrf_token %}
+        
         <div class="mb-3">
             <label>Pickup City</label>
-            <select name="pickup_city" class="form-control">
+            <select name="pickup_city" class="form-control" required>
                 <option value="">Select pickup city</option>
+                {% for city in cities %}
+                    <option value="{{ city.id }}">{{ city.name }}</option>
+                {% endfor %}
             </select>
         </div>
+        
         <div class="mb-3">
             <label>Drop-off City</label>
-            <select name="dropoff_city" class="form-control">
+            <select name="dropoff_city" class="form-control" required>
                 <option value="">Select drop-off city</option>
+                {% for city in cities %}
+                    <option value="{{ city.id }}">{{ city.name }}</option>
+                {% endfor %}
             </select>
         </div>
+        
+        <div class="mb-3">
+            <label>Pickup Location</label>
+            <input type="text" name="pickup_location" class="form-control" placeholder="e.g., Union Station" required>
+        </div>
+        
+        <div class="mb-3">
+            <label>Drop-off Location</label>
+            <input type="text" name="dropoff_location" class="form-control" placeholder="e.g., Rideau Centre" required>
+        </div>
+        
+        <div class="mb-3">
+            <label>Date</label>
+            <input type="date" name="departure_date" class="form-control" required>
+        </div>
+        
+        <div class="mb-3">
+            <label>Time</label>
+            <input type="time" name="departure_time" class="form-control" required>
+        </div>
+        
+        <div class="mb-3">
+            <label>Available Seats</label>
+            <select name="available_seats" class="form-control" required>
+                <option value="">Select seats</option>
+                <option value="1">1 seat</option>
+                <option value="2">2 seats</option>
+                <option value="3">3 seats</option>
+                <option value="4">4 seats</option>
+            </select>
+        </div>
+        
         <div class="mb-3">
             <label>Price per Seat</label>
-            <input type="number" name="price_per_seat" class="form-control" step="0.01">
+            <input type="number" name="price_per_seat" class="form-control" step="0.01" placeholder="25.00" required>
         </div>
-        <button type="submit" class="btn btn-primary">Create Ride</button>
+        
+        <div class="mb-3">
+            <label>Notes (Optional)</label>
+            <textarea name="notes" class="form-control" rows="3"></textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-success">Create Ride</button>
+        <a href="{% url 'accounts:driver_dashboard' %}" class="btn btn-secondary">Cancel</a>
     </form>
-    <a href="{% url 'accounts:driver_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
 </div>
 {% endblock %}

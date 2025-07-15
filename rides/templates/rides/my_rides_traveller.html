@@ -1,9 +1,55 @@
 {% extends 'base.html' %}
-{% block title %}My Bookings - pointRide{% endblock %}
+{% block title %}My Bookings - Traveller{% endblock %}
+
 {% block content %}
 <div class="container py-5">
     <h1>My Bookings</h1>
-    <p>Your ride bookings will be displayed here (Template created - functionality coming soon)</p>
-    <a href="{% url 'rides:home_search' %}" class="btn btn-primary">Find New Rides</a>
+    
+    {% if bookings %}
+        <p>You have {{ bookings|length }} booking{{ bookings|length|pluralize }}:</p>
+        
+        {% for booking in bookings %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h5 class="card-title">{{ booking.ride.pickup_city }} → {{ booking.ride.dropoff_city }}</h5>
+                        <p class="card-text">
+                            <strong>Driver:</strong> {{ booking.ride.driver.full_legal_name }}<br>
+                            <strong>Date:</strong> {{ booking.ride.departure_date }} at {{ booking.ride.departure_time }}<br>
+                            <strong>Seats Booked:</strong> {{ booking.seats_booked }}<br>
+                            <strong>Status:</strong> 
+                            {% if booking.status == 'CONFIRMED' %}
+                                <span class="badge bg-success">{{ booking.status }}</span>
+                            {% elif booking.status == 'PENDING' %}
+                                <span class="badge bg-warning">{{ booking.status }}</span>
+                            {% elif booking.status == 'CANCELLED' %}
+                                <span class="badge bg-danger">{{ booking.status }}</span>
+                            {% else %}
+                                <span class="badge bg-info">{{ booking.status }}</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <h5 class="text-primary">${{ booking.total_price }}</h5>
+                        <p class="text-muted">Total cost</p>
+                        <a href="{% url 'rides:booking_detail' booking.id %}" class="btn btn-primary btn-sm">View Booking</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info">
+            <h4>No bookings yet</h4>
+            <p>You haven't booked any rides yet. Start exploring rides available in Ontario!</p>
+            <a href="{% url 'rides:home_search' %}" class="btn btn-primary">Find Your First Ride</a>
+        </div>
+    {% endif %}
+    
+    <div class="mt-3">
+        <a href="{% url 'accounts:traveller_dashboard' %}" class="btn btn-secondary">← Back to Dashboard</a>
+        <a href="{% url 'rides:home_search' %}" class="btn btn-success">+ Find New Ride</a>
+    </div>
 </div>
 {% endblock %}

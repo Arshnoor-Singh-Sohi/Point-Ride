@@ -1,9 +1,80 @@
 {% extends 'base.html' %}
-{% block title %}Ride Details - pointRide{% endblock %}
+
+{% block title %}Ride Details{% endblock %}
+
 {% block content %}
 <div class="container py-5">
-    <h1>Ride Details</h1>
-    <p>Ride details will be displayed here (Template created - functionality coming soon)</p>
-    <a href="{% url 'rides:search_rides' %}" class="btn btn-secondary">Back to Search</a>
+    <h1>{{ ride.pickup_city }} → {{ ride.dropoff_city }}</h1>
+    
+    <div class="card">
+        <div class="card-body">
+            <h5>Ride Details</h5>
+            <p><strong>Driver:</strong> {{ ride.driver.full_legal_name }}</p>
+            <p><strong>Date:</strong> {{ ride.departure_date }}</p>
+            <p><strong>Time:</strong> {{ ride.departure_time }}</p>
+            <p><strong>Pickup:</strong> {{ ride.pickup_location }}</p>
+            <p><strong>Drop-off:</strong> {{ ride.dropoff_location }}</p>
+            <p><strong>Available Seats:</strong> {{ ride.available_seats_count }}</p>
+            <p><strong>Price per Seat:</strong> ${{ ride.price_per_seat }}</p>
+            <p><strong>Status:</strong> {{ ride.status }}</p>
+            {% if ride.notes %}
+            <p><strong>Notes:</strong> {{ ride.notes }}</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    {% if existing_booking %}
+        <div class="alert alert-info mt-3">
+            <h5>Your Booking</h5>
+            <p>You have already booked {{ existing_booking.seats_booked }} seat(s).</p>
+            <p><strong>Status:</strong> {{ existing_booking.status }}</p>
+            <a href="{% url 'rides:booking_detail' existing_booking.id %}" class="btn btn-primary">View Booking</a>
+        </div>
+    {% elif can_book %}
+        <div class="card mt-3">
+            <div class="card-body">
+                <h5>Book This Ride</h5>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label>Number of Seats</label>
+                        <select name="seats_booked" class="form-control" required>
+                            {% for seat in available_seats_range %}
+                                <option value="{{ seat }}">{{ seat }} seat(s)</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label>Notes (Optional)</label>
+                        <textarea name="booking_notes" class="form-control" rows="2"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">Book Now</button>
+                </form>
+            </div>
+        </div>
+    {% elif not user.is_authenticated %}
+        <div class="alert alert-warning mt-3">
+            <h5>Want to Book?</h5>
+            <p>Please log in to book this ride.</p>
+            <a href="{% url 'accounts:login' %}" class="btn btn-primary">Login</a>
+        </div>
+    {% elif user == ride.driver %}
+        <div class="alert alert-info mt-3">
+            <h5>Your Ride</h5>
+            <p>This is your ride. You cannot book your own ride.</p>
+        </div>
+    {% else %}
+        <div class="alert alert-secondary mt-3">
+            <h5>Booking Not Available</h5>
+            <p>This ride is not available for booking.</p>
+        </div>
+    {% endif %}
+    
+    <div class="mt-3">
+        <a href="{% url 'rides:search_rides' %}" class="btn btn-secondary">← Back to Search</a>
+        {% if user == ride.driver %}
+        <a href="{% url 'rides:my_rides' %}" class="btn btn-primary">My Rides</a>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

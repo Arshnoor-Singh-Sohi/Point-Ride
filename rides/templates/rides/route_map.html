@@ -1,14 +1,430 @@
 {% extends 'base.html' %}
-{% block title %}Route Map - pointRide{% endblock %}
+
+{% block title %}Route Planning - pointRide{% endblock %}
+
 {% block content %}
-<div class="container py-5">
-    <h1>Route Map</h1>
-    <p>Interactive route map will be displayed here</p>
-    <p>This connects to your teammate's map functionality</p>
-    <div id="map-container" style="height: 400px; background: #f8f9fa; border: 1px solid #dee2e6;">
-        <div class="d-flex align-items-center justify-content-center h-100">
-            <p class="text-muted">Map interface loading...</p>
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Left Panel: Route Creation Form -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>🗺️ Route Planning</h5>
+                    <p class="text-muted mb-0">Click cities on the map or use form below</p>
+                </div>
+                <div class="card-body">
+                    <!-- Quick Route Creation Form -->
+                    <form method="post" id="routeForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label>From City</label>
+                            <select name="origin_city" id="originSelect" class="form-control" required>
+                                <option value="">Select origin</option>
+                                {% for city in cities %}
+                                    <option value="{{ city.id }}" data-lat="{{ city.latitude }}" data-lng="{{ city.longitude }}">
+                                        {{ city.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label>To City</label>
+                            <select name="destination_city" id="destinationSelect" class="form-control" required>
+                                <option value="">Select destination</option>
+                                {% for city in cities %}
+                                    <option value="{{ city.id }}" data-lat="{{ city.latitude }}" data-lng="{{ city.longitude }}">
+                                        {{ city.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label>Price per Seat</label>
+                            <input type="number" name="driver_price" class="form-control" step="0.01" min="0" placeholder="25.00" required>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success w-100">Create Route</button>
+                    </form>
+                    
+                    <hr>
+                    
+                    <!-- Map Status -->
+                    <div id="mapStatus" class="alert alert-info">
+                        Click cities on the map to select route
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'rides:create_ride' %}" class="btn btn-primary">📝 Create Ride (Form)</a>
+                        <button onclick="showCreateRideModal()" class="btn btn-info" id="mapCreateRideBtn" disabled>🗺️ Create Ride from Map</button>
+                        <button onclick="clearMapSelection()" class="btn btn-secondary btn-sm">Clear Selection</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Existing Routes -->
+            {% if user_routes %}
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6>Your Existing Routes ({{ user_routes|length }})</h6>
+                </div>
+                <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                    {% for route in user_routes %}
+                    <div class="mb-2 p-2 border rounded">
+                        <strong>{{ route.origin_city }} → {{ route.destination_city }}</strong><br>
+                        <small class="text-muted">${{ route.driver_price }} per seat</small>
+                        <button onclick="showRouteOnMap({{ route.origin_city.latitude }}, {{ route.origin_city.longitude }}, {{ route.destination_city.latitude }}, {{ route.destination_city.longitude }}, '{{ route.origin_city.name }}', '{{ route.destination_city.name }}')" 
+                                class="btn btn-sm btn-outline-primary float-end">View on Map</button>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Right Panel: Real Interactive Map -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>🌍 Ontario Interactive Map</h5>
+                    <div>
+                        <button onclick="resetMapView()" class="btn btn-sm btn-secondary">Reset View</button>
+                        <button onclick="zoomToOntario()" class="btn btn-sm btn-info">Zoom to Ontario</button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <!-- Real Map Container -->
+                    <div id="map" style="height: 600px; width: 100%;"></div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<!-- Create Ride Modal -->
+<div class="modal fade" id="createRideModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create Ride from Map Selection</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'rides:create_ride' %}" id="mapRideForm">
+                    {% csrf_token %}
+                    <input type="hidden" name="pickup_city" id="mapPickupCity">
+                    <input type="hidden" name="dropoff_city" id="mapDropoffCity">
+                    
+                    <div class="mb-3">
+                        <label>Route Selected:</label>
+                        <div id="selectedRoute" class="alert alert-light"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label>Pickup Location</label>
+                        <input type="text" name="pickup_location" class="form-control" required placeholder="Specific pickup address">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label>Drop-off Location</label>
+                        <input type="text" name="dropoff_location" class="form-control" required placeholder="Specific drop-off address">
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-6">
+                            <label>Date</label>
+                            <input type="date" name="departure_date" class="form-control" required>
+                        </div>
+                        <div class="col-6">
+                            <label>Time</label>
+                            <input type="time" name="departure_time" class="form-control" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-6">
+                            <label>Seats</label>
+                            <select name="available_seats" class="form-control" required>
+                                <option value="1">1 seat</option>
+                                <option value="2">2 seats</option>
+                                <option value="3">3 seats</option>
+                                <option value="4">4 seats</option>
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label>Price/Seat</label>
+                            <input type="number" name="price_per_seat" class="form-control" step="0.01" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <label>Notes</label>
+                        <textarea name="notes" class="form-control" rows="2"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" form="mapRideForm" class="btn btn-success">Create Ride</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Leaflet CSS and JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+// Map variables
+let map;
+let selectedOrigin = null;
+let selectedDestination = null;
+let cityMarkers = [];
+let routeLine = null;
+
+// Initialize the real map
+function initMap() {
+    // Create map centered on Ontario
+    map = L.map('map').setView([44.2619, -78.2628], 6);
+    
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    
+    // Add Ontario cities as markers
+    const cities = [
+        {% for city in cities %}
+        {
+            id: '{{ city.id }}',
+            name: '{{ city.name }}',
+            lat: {{ city.latitude }},
+            lng: {{ city.longitude }}
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+    
+    // Add markers for each city
+    cities.forEach(city => {
+        const marker = L.marker([city.lat, city.lng])
+            .addTo(map)
+            .bindPopup(`<strong>${city.name}</strong><br><button onclick="selectCityFromMap('${city.id}', '${city.name}', ${city.lat}, ${city.lng})" class="btn btn-sm btn-primary">Select City</button>`);
+        
+        marker.cityData = city;
+        cityMarkers.push(marker);
+    });
+    
+    // Fit map to show all markers
+    if (cityMarkers.length > 0) {
+        const group = new L.featureGroup(cityMarkers);
+        map.fitBounds(group.getBounds().pad(0.1));
+    }
+}
+
+// Select city from map click
+function selectCityFromMap(cityId, cityName, lat, lng) {
+    if (!selectedOrigin) {
+        // Select as origin
+        selectedOrigin = {id: cityId, name: cityName, lat: lat, lng: lng};
+        document.getElementById('originSelect').value = cityId;
+        
+        // Add origin marker
+        L.marker([lat, lng], {
+            icon: L.divIcon({
+                className: 'origin-marker',
+                html: '<div style="background: green; color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-weight: bold;">O</div>',
+                iconSize: [30, 30]
+            })
+        }).addTo(map).bindPopup(`<strong>Origin: ${cityName}</strong>`);
+        
+        updateMapStatus(`Origin: <strong>${cityName}</strong><br>Now select destination city`, 'warning');
+        
+    } else if (!selectedDestination && cityId !== selectedOrigin.id) {
+        // Select as destination
+        selectedDestination = {id: cityId, name: cityName, lat: lat, lng: lng};
+        document.getElementById('destinationSelect').value = cityId;
+        
+        // Add destination marker
+        L.marker([lat, lng], {
+            icon: L.divIcon({
+                className: 'destination-marker',
+                html: '<div style="background: red; color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-weight: bold;">D</div>',
+                iconSize: [30, 30]
+            })
+        }).addTo(map).bindPopup(`<strong>Destination: ${cityName}</strong>`);
+        
+        // Draw route line
+        drawRouteLine();
+        
+        updateMapStatus(`Route: <strong>${selectedOrigin.name} → ${selectedDestination.name}</strong><br>Ready to create route or ride!`, 'success');
+        document.getElementById('mapCreateRideBtn').disabled = false;
+        
+    } else if (selectedDestination) {
+        // Reset and start over
+        clearMapSelection();
+        selectCityFromMap(cityId, cityName, lat, lng);
+    }
+}
+
+// Draw route line between cities
+function drawRouteLine() {
+    if (selectedOrigin && selectedDestination) {
+        // Remove existing route line
+        if (routeLine) {
+            map.removeLayer(routeLine);
+        }
+        
+        // Draw new route line
+        routeLine = L.polyline([
+            [selectedOrigin.lat, selectedOrigin.lng],
+            [selectedDestination.lat, selectedDestination.lng]
+        ], {
+            color: 'blue',
+            weight: 3,
+            opacity: 0.7
+        }).addTo(map);
+        
+        // Fit map to show the route
+        map.fitBounds(routeLine.getBounds().pad(0.1));
+    }
+}
+
+// Update map status
+function updateMapStatus(message, type) {
+    const statusDiv = document.getElementById('mapStatus');
+    statusDiv.innerHTML = message;
+    statusDiv.className = `alert alert-${type}`;
+}
+
+// Clear map selection
+function clearMapSelection() {
+    selectedOrigin = null;
+    selectedDestination = null;
+    document.getElementById('originSelect').value = '';
+    document.getElementById('destinationSelect').value = '';
+    document.getElementById('mapCreateRideBtn').disabled = true;
+    
+    // Clear map layers
+    map.eachLayer(layer => {
+        if (layer instanceof L.Marker && (layer.options.icon?.options.className === 'origin-marker' || layer.options.icon?.options.className === 'destination-marker')) {
+            map.removeLayer(layer);
+        }
+    });
+    
+    if (routeLine) {
+        map.removeLayer(routeLine);
+        routeLine = null;
+    }
+    
+    updateMapStatus('Click cities on the map to select route', 'info');
+}
+
+// Show create ride modal
+function showCreateRideModal() {
+    if (!selectedOrigin || !selectedDestination) {
+        alert('Please select both origin and destination cities on the map first!');
+        return;
+    }
+    
+    document.getElementById('mapPickupCity').value = selectedOrigin.id;
+    document.getElementById('mapDropoffCity').value = selectedDestination.id;
+    document.getElementById('selectedRoute').innerHTML = `<strong>${selectedOrigin.name} → ${selectedDestination.name}</strong>`;
+    
+    new bootstrap.Modal(document.getElementById('createRideModal')).show();
+}
+
+// Show existing route on map
+function showRouteOnMap(originLat, originLng, destLat, destLng, originName, destName) {
+    // Clear current selection
+    clearMapSelection();
+    
+    // Remove existing route line
+    if (routeLine) {
+        map.removeLayer(routeLine);
+    }
+    
+    // Draw route line
+    routeLine = L.polyline([
+        [originLat, originLng],
+        [destLat, destLng]
+    ], {
+        color: 'purple',
+        weight: 4,
+        opacity: 0.8
+    }).addTo(map);
+    
+    // Add markers
+    L.marker([originLat, originLng], {
+        icon: L.divIcon({
+            html: '<div style="background: purple; color: white; border-radius: 50%; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; font-size: 12px;">O</div>',
+            iconSize: [25, 25]
+        })
+    }).addTo(map).bindPopup(`<strong>Origin: ${originName}</strong>`);
+    
+    L.marker([destLat, destLng], {
+        icon: L.divIcon({
+            html: '<div style="background: purple; color: white; border-radius: 50%; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; font-size: 12px;">D</div>',
+            iconSize: [25, 25]
+        })
+    }).addTo(map).bindPopup(`<strong>Destination: ${destName}</strong>`);
+    
+    // Fit map to show the route
+    map.fitBounds(routeLine.getBounds().pad(0.1));
+    
+    updateMapStatus(`Viewing existing route: <strong>${originName} → ${destName}</strong>`, 'info');
+}
+
+// Reset map view
+function resetMapView() {
+    clearMapSelection();
+    if (cityMarkers.length > 0) {
+        const group = new L.featureGroup(cityMarkers);
+        map.fitBounds(group.getBounds().pad(0.1));
+    }
+}
+
+// Zoom to Ontario
+function zoomToOntario() {
+    map.setView([44.2619, -78.2628], 6);
+}
+
+// Form select changes
+document.getElementById('originSelect').addEventListener('change', function(e) {
+    const option = e.target.selectedOptions[0];
+    if (option && option.dataset.lat) {
+        const lat = parseFloat(option.dataset.lat);
+        const lng = parseFloat(option.dataset.lng);
+        const cityName = option.text;
+        const cityId = option.value;
+        
+        if (cityId) {
+            selectCityFromMap(cityId, cityName, lat, lng);
+        }
+    }
+});
+
+document.getElementById('destinationSelect').addEventListener('change', function(e) {
+    const option = e.target.selectedOptions[0];
+    if (option && option.dataset.lat && selectedOrigin) {
+        const lat = parseFloat(option.dataset.lat);
+        const lng = parseFloat(option.dataset.lng);
+        const cityName = option.text;
+        const cityId = option.value;
+        
+        if (cityId && cityId !== selectedOrigin.id) {
+            selectCityFromMap(cityId, cityName, lat, lng);
+        }
+    }
+});
+
+// Initialize map when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    initMap();
+});
+</script>
 {% endblock %}
+            

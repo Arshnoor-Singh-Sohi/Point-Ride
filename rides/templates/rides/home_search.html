@@ -1,20 +1,75 @@
 {% extends 'base.html' %}
-{% block title %}Find Rides - pointRide{% endblock %}
+
+{% block title %}Find Rides{% endblock %}
+
 {% block content %}
 <div class="container py-5">
-    <h1>Find Your Ride</h1>
-    <p>Search for available rides (Template created - functionality coming soon)</p>
-    <form method="post">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label>Pickup Location</label>
-            <input type="text" name="pickup_location" class="form-control" placeholder="Enter pickup location">
+    <div class="text-center mb-5">
+        <h1>Where do you want to go?</h1>
+        <p class="text-muted">Find rides across Ontario</p>
+    </div>
+    
+    <!-- Search Form -->
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <form method="post" action="{% url 'rides:search_rides' %}">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label>From</label>
+                                <select name="pickup_city" class="form-control" required>
+                                    <option value="">Select pickup city</option>
+                                    {% for city in cities %}
+                                        <option value="{{ city.id }}">{{ city.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>To</label>
+                                <select name="dropoff_city" class="form-control" required>
+                                    <option value="">Select destination</option>
+                                    {% for city in cities %}
+                                        <option value="{{ city.id }}">{{ city.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label>Departure Date</label>
+                                <input type="date" name="departure_date" class="form-control" required min="{{ today|date:'Y-m-d' }}">
+                            </div>
+                            <div class="col-md-6 mb-3 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary w-100">Search Rides</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="mb-3">
-            <label>Drop-off Location</label>
-            <input type="text" name="dropoff_location" class="form-control" placeholder="Enter drop-off location">
+    </div>
+    
+    <!-- Recent Rides -->
+    {% if recent_rides %}
+    <div class="mt-5">
+        <h3>Recent Rides</h3>
+        <div class="row">
+            {% for ride in recent_rides %}
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>{{ ride.pickup_city }} → {{ ride.dropoff_city }}</h5>
+                        <p><small class="text-muted">{{ ride.departure_date }} at {{ ride.departure_time }}</small></p>
+                        <p><strong>${{ ride.price_per_seat }}</strong> per seat | {{ ride.available_seats_count }} seats left</p>
+                        <a href="{% url 'rides:ride_detail' ride.id %}" class="btn btn-sm btn-outline-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
         </div>
-        <button type="submit" class="btn btn-primary">Search Rides</button>
-    </form>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

@@ -1,9 +1,82 @@
 {% extends 'base.html' %}
-{% block title %}Search Results - pointRide{% endblock %}
+
+{% block title %}Search Rides{% endblock %}
+
 {% block content %}
 <div class="container py-5">
-    <h1>Search Results</h1>
-    <p>Available rides will be displayed here (Template created - functionality coming soon)</p>
-    <a href="{% url 'rides:home_search' %}" class="btn btn-secondary">Back to Search</a>
+    <h1>Search Rides</h1>
+    
+    <!-- Search Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>From</label>
+                        <select name="pickup_city" class="form-control" required>
+                            <option value="">Select pickup city</option>
+                            {% for city in cities %}
+                                <option value="{{ city.id }}">{{ city.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label>To</label>
+                        <select name="dropoff_city" class="form-control" required>
+                            <option value="">Select destination</option>
+                            {% for city in cities %}
+                                <option value="{{ city.id }}">{{ city.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label>Date</label>
+                        <input type="date" name="departure_date" class="form-control" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label>&nbsp;</label>
+                        <button type="submit" class="btn btn-primary w-100">Search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Search Results -->
+    {% if search_performed %}
+        {% if rides %}
+            <h3>Found {{ rides|length }} ride(s)</h3>
+            {% for ride in rides %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h5>{{ ride.pickup_city }} → {{ ride.dropoff_city }}</h5>
+                            <p><strong>Driver:</strong> {{ ride.driver.full_legal_name }}</p>
+                            <p><strong>Date:</strong> {{ ride.departure_date }} at {{ ride.departure_time }}</p>
+                            <p><strong>Pickup:</strong> {{ ride.pickup_location }}</p>
+                            <p><strong>Drop-off:</strong> {{ ride.dropoff_location }}</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <h4>${{ ride.price_per_seat }}/seat</h4>
+                            <p>{{ ride.available_seats_count }} seats left</p>
+                            <a href="{% url 'rides:ride_detail' ride.id %}" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info">
+                <h4>No rides found</h4>
+                <p>Try different cities or dates.</p>
+            </div>
+        {% endif %}
+    {% else %}
+        <p>Use the search form above to find rides.</p>
+    {% endif %}
+    
+    <a href="{% url 'rides:home_search' %}" class="btn btn-secondary">← Back to Home</a>
 </div>
 {% endblock %}

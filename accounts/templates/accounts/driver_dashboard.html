@@ -7,46 +7,84 @@
 <div class="container py-5">
     <div class="text-center mb-5">
         <h1 class="fw-bold">Welcome, {{ request.user.full_legal_name }} 🚗</h1>
-        <p class="text-muted">Manage your rides and profile from here.</p>
+        <p class="text-muted">Manage your rides and routes with our enhanced planning tools</p>
     </div>
 
     <div class="row g-4">
+        <!-- Enhanced Route Planning Card -->
         <div class="col-md-6">
-            <div class="card shadow-sm border-0 h-100">
+            <div class="card shadow border-primary h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Your Upcoming Rides</h5>
-                    <p class="card-text">No scheduled rides yet.</p>
-                    <a href="#" class="btn btn-primary btn-sm">Create a Ride</a>
+                    <h5 class="card-title text-primary">🗺️ Enhanced Route Planning</h5>
+                    <p class="card-text">Plan routes using our interactive Ontario map with all cities. Create routes visually and manage them efficiently.</p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'rides:route_map' %}" class="btn btn-primary">🗺️ Open Map Interface</a>
+                        <small class="text-muted">✨ New: Interactive city selection with visual map</small>
+                    </div>
                 </div>
             </div>
         </div>
 
+        <!-- Create Ride Card -->
         <div class="col-md-6">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Ride Requests</h5>
-                    <p class="card-text">No pending requests.</p>
-                    <a href="#" class="btn btn-outline-primary btn-sm">View Requests</a>
+                    <h5 class="card-title">📝 Create New Ride</h5>
+                    <p class="card-text">Post a ride offer using our quick form interface.</p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'rides:create_ride' %}" class="btn btn-success">Create Ride (Form)</a>
+                        <small class="text-muted">Traditional form-based ride creation</small>
+                    </div>
                 </div>
             </div>
         </div>
 
+        <!-- My Rides Card -->
         <div class="col-md-6">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Earnings Summary</h5>
-                    <p class="card-text">Track your recent earnings and ride history.</p>
-                    <a href="#" class="btn btn-outline-success btn-sm">View Earnings</a>
+                    <h5 class="card-title">🚗 My Rides & Bookings</h5>
+                    <p class="card-text">View your posted rides and manage booking requests from passengers.</p>
+                    <a href="{% url 'rides:my_rides' %}" class="btn btn-info">Manage My Rides</a>
                 </div>
             </div>
         </div>
 
+        <!-- Browse Rides Card -->
         <div class="col-md-6">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Driver Profile</h5>
-                    <p class="card-text">Update vehicle details and availability.</p>
-                    <a href="#" class="btn btn-outline-secondary btn-sm">Edit Profile</a>
+                    <h5 class="card-title">🔍 Browse Available Rides</h5>
+                    <p class="card-text">See what other drivers are offering across Ontario.</p>
+                    <a href="{% url 'rides:home_search' %}" class="btn btn-outline-primary">Browse Rides</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Stats Card -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h5 class="card-title mb-0">Account Status</h5>
+                            <p class="card-text mb-0">
+                                <strong>Verification Status:</strong> 
+                                {% if user.driver_profile.account_status == 'VERIFIED' %}
+                                    <span class="badge bg-success">✅ Verified Driver</span>
+                                {% elif user.driver_profile.account_status == 'PENDING' %}
+                                    <span class="badge bg-warning">⏳ Pending Verification</span>
+                                {% else %}
+                                    <span class="badge bg-danger">{{ user.driver_profile.account_status }}</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <small class="text-muted">Ready to start earning with pointRide</small>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

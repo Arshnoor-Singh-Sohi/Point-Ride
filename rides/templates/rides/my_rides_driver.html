@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}My Rides{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1>My Rides</h1>
+    
+    <!-- Booking Requests -->
+    {% if pending_bookings %}
+    <div class="alert alert-warning">
+        <h3>Pending Booking Requests ({{ pending_bookings|length }})</h3>
+        <p>These passengers want to book your rides:</p>
+        
+        {% for booking in pending_bookings %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5>{{ booking.ride.pickup_city }} → {{ booking.ride.dropoff_city }}</h5>
+                <p>
+                    <strong>Passenger:</strong> {{ booking.traveller.full_legal_name }}<br>
+                    <strong>Seats:</strong> {{ booking.seats_booked }}<br>
+                    <strong>Payment:</strong> ${{ booking.total_price }}<br>
+                    <strong>Date:</strong> {{ booking.ride.departure_date }}
+                </p>
+                <form method="post" action="{% url 'rides:booking_detail' booking.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="confirm">
+                    <button type="submit" class="btn btn-success">Confirm</button>
+                </form>
+                <form method="post" action="{% url 'rides:booking_detail' booking.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="reject">
+                    <button type="submit" class="btn btn-danger">Reject</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <!-- My Rides -->
+    <h3>My Posted Rides</h3>
+    {% if rides %}
+        {% for ride in rides %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h5>{{ ride.pickup_city }} → {{ ride.dropoff_city }}</h5>
+                        <p>
+                            <strong>Date:</strong> {{ ride.departure_date }} at {{ ride.departure_time }}<br>
+                            <strong>Status:</strong> {{ ride.status }}<br>
+                            <strong>Seats Left:</strong> {{ ride.available_seats_count }}
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>${{ ride.price_per_seat }}/seat</h5>
+                        <a href="{% url 'rides:ride_detail' ride.id %}" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>No rides yet. <a href="{% url 'rides:create_ride' %}">Create your first ride</a></p>
+    {% endif %}
+    
+    <a href="{% url 'accounts:driver_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+</div>
+{% endblock %}
