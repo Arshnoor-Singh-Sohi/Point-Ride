@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Traveller Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="fw-bold">Welcome, {{ request.user.full_legal_name }} 👋</h1>
+        <p class="text-muted">Here’s your dashboard overview.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Upcoming Trips</h5>
+                    <p class="card-text">You don’t have any trips scheduled yet.</p>
+                    <a href="#" class="btn btn-primary btn-sm">Find a Ride</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Saved Drivers</h5>
+                    <p class="card-text">You haven't saved any drivers yet.</p>
+                    <a href="#" class="btn btn-outline-primary btn-sm">Browse Drivers</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Profile Settings</h5>
+                    <p class="card-text">View or update your travel preferences and personal info.</p>
+                    <a href="#" class="btn btn-outline-secondary btn-sm">Edit Profile</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Support</h5>
+                    <p class="card-text">Need help? Contact our support team anytime.</p>
+                    <a href="#" class="btn btn-outline-danger btn-sm">Get Support</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

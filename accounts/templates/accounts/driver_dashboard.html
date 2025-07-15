@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Driver Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="fw-bold">Welcome, {{ request.user.full_legal_name }} 🚗</h1>
+        <p class="text-muted">Manage your rides and profile from here.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Your Upcoming Rides</h5>
+                    <p class="card-text">No scheduled rides yet.</p>
+                    <a href="#" class="btn btn-primary btn-sm">Create a Ride</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Ride Requests</h5>
+                    <p class="card-text">No pending requests.</p>
+                    <a href="#" class="btn btn-outline-primary btn-sm">View Requests</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Earnings Summary</h5>
+                    <p class="card-text">Track your recent earnings and ride history.</p>
+                    <a href="#" class="btn btn-outline-success btn-sm">View Earnings</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Driver Profile</h5>
+                    <p class="card-text">Update vehicle details and availability.</p>
+                    <a href="#" class="btn btn-outline-secondary btn-sm">Edit Profile</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

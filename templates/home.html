@@ -1,0 +1,66 @@
+{# templates/home.html #}
+{% extends 'base.html' %}
+
+{% block title %}Welcome to pointRide{% endblock %}
+
+{% block content %}
+    <section class="hero bg-primary text-white text-center py-5 py-md-5">
+        <div class="container">
+            <h1 class="display-4 fw-bold mb-3">Your Journey, Our Priority.</h1>
+            <p class="lead mb-4">Connect with reliable drivers for comfortable and affordable rides across Ontario, Canada.</p>
+            <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+                <a href="{% url 'accounts:traveller_registration' %}" class="btn btn-light btn-lg">Find a Ride</a>
+                <a href="{% url 'accounts:driver_registration_step1' %}" class="btn btn-outline-light btn-lg">Offer a Ride</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="features py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5 display-5 fw-bold">Why Choose pointRide?</h2>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+                <div class="col">
+                    <div class="card h-100 shadow-sm text-center">
+                        <div class="card-body">
+                            <h3 class="card-title h5 text-primary fw-bold">Seamless Booking</h3>
+                            <p class="card-text text-muted">Easily find and book rides with our intuitive interface.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100 shadow-sm text-center">
+                        <div class="card-body">
+                            <h3 class="card-title h5 text-primary fw-bold">Verified Drivers</h3>
+                            <p class="card-text text-muted">All our drivers undergo a multi-step verification process for your safety and peace of mind.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100 shadow-sm text-center">
+                        <div class="card-body">
+                            <h3 class="card-title h5 text-primary fw-bold">Transparent Pricing</h3>
+                            <p class="card-text text-muted">No surprises, see the estimated fare upfront.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100 shadow-sm text-center">
+                        <div class="card-body">
+                            <h3 class="card-title h5 text-primary fw-bold">Flexible Scheduling</h3>
+                            <p class="card-text text-muted">Drivers can set their availability, and travellers can find rides that fit their schedule.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-us py-5 bg-info bg-opacity-10">
+        <div class="container">
+            <h2 class="text-center mb-4 display-5 fw-bold">About pointRide</h2>
+            <p class="lead text-center text-muted mx-auto" style="max-width: 800px;">
+                pointRide is a ride-sharing platform dedicated to providing safe, reliable, and affordable transportation services primarily within Ontario, Canada. We aim to connect drivers with travellers efficiently, ensuring a smooth journey for everyone.
+            </p>
+        </div>
+    </section>
+{% endblock %}
