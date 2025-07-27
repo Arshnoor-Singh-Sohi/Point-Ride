@@ -9,6 +9,7 @@ from django.db.models import Q, Count, Sum
 from django.utils import timezone
 from datetime import date, timedelta
 from .models import Ride, Booking, City, Route, RideReview
+from django.conf import settings
 
 def home_search(request):
     """
@@ -270,6 +271,7 @@ def my_rides(request):
 def route_map(request):
     """
     Enhanced visual route selection interface - SIMPLIFIED VERSION
+    Now includes secure API key handling for Google Maps
     """
     if not request.user.is_driver:
         return HttpResponseForbidden("Only drivers can access route planning")
@@ -280,11 +282,16 @@ def route_map(request):
     # Note: Route creation is now handled directly in create_ride view
     # This view focuses on visualization and planning
     
-    return render(request, 'rides/route_map.html', {
+    # Pass the Google Maps API key from settings to the template
+    # This is the key addition - we're securely passing the API key through context
+    context = {
         'cities': cities,
         'user_routes': user_routes,
         'today': date.today(),
-    })
+        'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY,  # Add API key to context
+    }
+    
+    return render(request, 'rides/route_map.html', context)
 
 @login_required
 def leave_review(request, ride_id):

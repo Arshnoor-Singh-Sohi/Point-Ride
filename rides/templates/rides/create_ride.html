@@ -1,77 +1,1471 @@
 {% extends 'base.html' %}
 
-{% block title %}Create Ride{% endblock %}
+{% block title %}Create Professional Ride - pointRide{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <h1>Create New Ride</h1>
-    
-    <form method="post">
-        {% csrf_token %}
-        
-        <div class="mb-3">
-            <label>Pickup City</label>
-            <select name="pickup_city" class="form-control" required>
-                <option value="">Select pickup city</option>
-                {% for city in cities %}
-                    <option value="{{ city.id }}">{{ city.name }}</option>
-                {% endfor %}
-            </select>
+<div class="ride-creation-workspace">
+    <!-- Hero Background -->
+    <div class="creation-hero">
+        <div class="hero-pattern"></div>
+        <div class="hero-glow"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="creation-container">
+        <!-- Header Section -->
+        <div class="creation-header">
+            <div class="breadcrumb-navigation">
+                <a href="{% url 'accounts:driver_dashboard' %}" class="breadcrumb-item">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </a>
+                <i class="bi bi-chevron-right breadcrumb-arrow"></i>
+                <span class="breadcrumb-current">Create Ride</span>
+            </div>
+            
+            <div class="header-content">
+                <div class="header-text">
+                    <h1 class="creation-title">
+                        <i class="bi bi-plus-circle-fill"></i>
+                        Create Professional Ride
+                    </h1>
+                    <p class="creation-subtitle">
+                        Design your next journey with our streamlined ride creation system. Set your route, schedule, and pricing with professional precision.
+                    </p>
+                </div>
+                
+                <div class="creation-stats">
+                    <div class="stat-bubble">
+                        <div class="stat-icon">
+                            <i class="bi bi-shield-check-fill"></i>
+                        </div>
+                        <div class="stat-text">
+                            <div class="stat-value">Verified</div>
+                            <div class="stat-label">Driver Status</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        <div class="mb-3">
-            <label>Drop-off City</label>
-            <select name="dropoff_city" class="form-control" required>
-                <option value="">Select drop-off city</option>
-                {% for city in cities %}
-                    <option value="{{ city.id }}">{{ city.name }}</option>
-                {% endfor %}
-            </select>
+
+        <!-- Form Card -->
+        <div class="form-card-container">
+            <div class="form-card">
+                <!-- Progress Indicator -->
+                <div class="progress-header">
+                    <div class="progress-steps">
+                        <div class="step-item active" data-step="1">
+                            <div class="step-circle">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </div>
+                            <span class="step-label">Route</span>
+                        </div>
+                        <div class="progress-line"></div>
+                        <div class="step-item" data-step="2">
+                            <div class="step-circle">
+                                <i class="bi bi-clock-fill"></i>
+                            </div>
+                            <span class="step-label">Schedule</span>
+                        </div>
+                        <div class="progress-line"></div>
+                        <div class="step-item" data-step="3">
+                            <div class="step-circle">
+                                <i class="bi bi-currency-dollar"></i>
+                            </div>
+                            <span class="step-label">Details</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Content -->
+                <form method="post" class="enhanced-ride-form" id="rideCreationForm">
+                    {% csrf_token %}
+                    
+                    <!-- Step 1: Route Selection -->
+                    <div class="form-section active" data-section="1">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="bi bi-signpost-2-fill"></i>
+                                Route Information
+                            </h3>
+                            <p class="section-description">Choose your departure and destination cities</p>
+                        </div>
+                        
+                        <div class="route-selection-grid">
+                            <div class="city-selector-group">
+                                <div class="input-wrapper enhanced">
+                                    <label for="pickup_city" class="floating-label">
+                                        <i class="bi bi-geo-alt"></i>
+                                        Pickup City
+                                    </label>
+                                    <select name="pickup_city" id="pickup_city" class="form-input-enhanced" required>
+                                        <option value="">Select pickup city</option>
+                                        {% for city in cities %}
+                                            <option value="{{ city.id }}">{{ city.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="input-indicator"></div>
+                                    <div class="input-focus-ring"></div>
+                                </div>
+                                
+                                <div class="route-connector-visual">
+                                    <div class="connector-line"></div>
+                                    <div class="connector-dot">
+                                        <i class="bi bi-arrow-right"></i>
+                                    </div>
+                                </div>
+                                
+                                <div class="input-wrapper enhanced">
+                                    <label for="dropoff_city" class="floating-label">
+                                        <i class="bi bi-geo-alt-fill"></i>
+                                        Drop-off City
+                                    </label>
+                                    <select name="dropoff_city" id="dropoff_city" class="form-input-enhanced" required>
+                                        <option value="">Select destination city</option>
+                                        {% for city in cities %}
+                                            <option value="{{ city.id }}">{{ city.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="input-indicator"></div>
+                                    <div class="input-focus-ring"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="location-details-grid">
+                            <div class="input-wrapper enhanced">
+                                <label for="pickup_location" class="floating-label">
+                                    <i class="bi bi-door-open"></i>
+                                    Pickup Location
+                                </label>
+                                <input type="text" name="pickup_location" id="pickup_location" 
+                                       class="form-input-enhanced" placeholder="e.g., Union Station, Toronto" required>
+                                <div class="input-indicator"></div>
+                                <div class="input-focus-ring"></div>
+                                <div class="input-help">Specific pickup address or landmark</div>
+                            </div>
+                            
+                            <div class="input-wrapper enhanced">
+                                <label for="dropoff_location" class="floating-label">
+                                    <i class="bi bi-flag"></i>
+                                    Drop-off Location
+                                </label>
+                                <input type="text" name="dropoff_location" id="dropoff_location" 
+                                       class="form-input-enhanced" placeholder="e.g., Rideau Centre, Ottawa" required>
+                                <div class="input-indicator"></div>
+                                <div class="input-focus-ring"></div>
+                                <div class="input-help">Specific drop-off address or landmark</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Schedule -->
+                    <div class="form-section" data-section="2">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="bi bi-calendar-event"></i>
+                                Schedule Details
+                            </h3>
+                            <p class="section-description">Set your departure date and time</p>
+                        </div>
+                        
+                        <div class="schedule-grid">
+                            <div class="input-wrapper enhanced">
+                                <label for="departure_date" class="floating-label">
+                                    <i class="bi bi-calendar-date"></i>
+                                    Departure Date
+                                </label>
+                                <input type="date" name="departure_date" id="departure_date" 
+                                       class="form-input-enhanced" required min="{{ today|date:'Y-m-d' }}">
+                                <div class="input-indicator"></div>
+                                <div class="input-focus-ring"></div>
+                            </div>
+                            
+                            <div class="input-wrapper enhanced">
+                                <label for="departure_time" class="floating-label">
+                                    <i class="bi bi-clock"></i>
+                                    Departure Time
+                                </label>
+                                <input type="time" name="departure_time" id="departure_time" 
+                                       class="form-input-enhanced" required>
+                                <div class="input-indicator"></div>
+                                <div class="input-focus-ring"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Capacity & Pricing -->
+                    <div class="form-section" data-section="3">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="bi bi-people-fill"></i>
+                                Capacity & Pricing
+                            </h3>
+                            <p class="section-description">Set your seat availability and competitive pricing</p>
+                        </div>
+                        
+                        <div class="capacity-pricing-grid">
+                            <div class="input-wrapper enhanced">
+                                <label for="available_seats" class="floating-label">
+                                    <i class="bi bi-people"></i>
+                                    Available Seats
+                                </label>
+                                <select name="available_seats" id="available_seats" class="form-input-enhanced" required>
+                                    <option value="">Select capacity</option>
+                                    <option value="1">1 seat</option>
+                                    <option value="2">2 seats</option>
+                                    <option value="3">3 seats</option>
+                                    <option value="4">4 seats</option>
+                                    <option value="5">5 seats</option>
+                                    <option value="6">6 seats</option>
+                                </select>
+                                <div class="input-indicator"></div>
+                                <div class="input-focus-ring"></div>
+                            </div>
+                            
+                            <div class="input-wrapper enhanced price-wrapper">
+                                <label for="price_per_seat" class="floating-label">
+                                    <i class="bi bi-currency-dollar"></i>
+                                    Price per Seat
+                                </label>
+                                <div class="price-input-container">
+                                    <span class="currency-prefix">$</span>
+                                    <input type="number" name="price_per_seat" id="price_per_seat" 
+                                           class="form-input-enhanced price-input" 
+                                           step="0.01" min="0" placeholder="25.00" required>
+                                    <span class="currency-suffix">CAD</span>
+                                </div>
+                                <div class="input-indicator"></div>
+                                <div class="input-focus-ring"></div>
+                                <div class="pricing-tips">
+                                    <i class="bi bi-lightbulb"></i>
+                                    <span>Competitive pricing increases bookings</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="notes-section">
+                            <div class="input-wrapper enhanced">
+                                <label for="notes" class="floating-label">
+                                    <i class="bi bi-chat-left-text"></i>
+                                    Additional Notes
+                                    <span class="optional-badge">Optional</span>
+                                </label>
+                                <textarea name="notes" id="notes" class="form-input-enhanced notes-textarea" 
+                                         rows="4" placeholder="Share important details about your ride (vehicle info, pickup instructions, preferences...)"></textarea>
+                                <div class="input-indicator"></div>
+                                <div class="input-focus-ring"></div>
+                                <div class="input-help">Help passengers understand your ride better</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <div class="actions-container">
+                            <button type="button" class="btn-secondary-action" onclick="window.history.back()">
+                                <i class="bi bi-arrow-left"></i>
+                                <span>Cancel</span>
+                            </button>
+                            
+                            <button type="submit" class="btn-primary-action" id="submitBtn">
+                                <div class="btn-content">
+                                    <i class="bi bi-plus-circle"></i>
+                                    <span>Create Professional Ride</span>
+                                </div>
+                                <div class="btn-shine"></div>
+                                <div class="btn-pulse"></div>
+                            </button>
+                        </div>
+                        
+                        <div class="form-footer-info">
+                            <div class="security-badge">
+                                <i class="bi bi-shield-check"></i>
+                                <span>All rides are verified and insured for your safety</span>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Quick Help Panel -->
+            <div class="quick-help-panel">
+                <div class="help-header">
+                    <h4 class="help-title">
+                        <i class="bi bi-question-circle-fill"></i>
+                        Quick Tips
+                    </h4>
+                </div>
+                
+                <div class="help-content">
+                    <div class="tip-item">
+                        <div class="tip-icon">
+                            <i class="bi bi-geo-alt-fill"></i>
+                        </div>
+                        <div class="tip-text">
+                            <strong>Specific Locations:</strong> Include landmarks or major intersections for easier meetups
+                        </div>
+                    </div>
+                    
+                    <div class="tip-item">
+                        <div class="tip-icon">
+                            <i class="bi bi-clock-fill"></i>
+                        </div>
+                        <div class="tip-text">
+                            <strong>Timing:</strong> Allow extra time for pickup and potential delays
+                        </div>
+                    </div>
+                    
+                    <div class="tip-item">
+                        <div class="tip-icon">
+                            <i class="bi bi-currency-dollar"></i>
+                        </div>
+                        <div class="tip-text">
+                            <strong>Fair Pricing:</strong> Check similar routes to set competitive rates
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        <div class="mb-3">
-            <label>Pickup Location</label>
-            <input type="text" name="pickup_location" class="form-control" placeholder="e.g., Union Station" required>
-        </div>
-        
-        <div class="mb-3">
-            <label>Drop-off Location</label>
-            <input type="text" name="dropoff_location" class="form-control" placeholder="e.g., Rideau Centre" required>
-        </div>
-        
-        <div class="mb-3">
-            <label>Date</label>
-            <input type="date" name="departure_date" class="form-control" required>
-        </div>
-        
-        <div class="mb-3">
-            <label>Time</label>
-            <input type="time" name="departure_time" class="form-control" required>
-        </div>
-        
-        <div class="mb-3">
-            <label>Available Seats</label>
-            <select name="available_seats" class="form-control" required>
-                <option value="">Select seats</option>
-                <option value="1">1 seat</option>
-                <option value="2">2 seats</option>
-                <option value="3">3 seats</option>
-                <option value="4">4 seats</option>
-            </select>
-        </div>
-        
-        <div class="mb-3">
-            <label>Price per Seat</label>
-            <input type="number" name="price_per_seat" class="form-control" step="0.01" placeholder="25.00" required>
-        </div>
-        
-        <div class="mb-3">
-            <label>Notes (Optional)</label>
-            <textarea name="notes" class="form-control" rows="3"></textarea>
-        </div>
-        
-        <button type="submit" class="btn btn-success">Create Ride</button>
-        <a href="{% url 'accounts:driver_dashboard' %}" class="btn btn-secondary">Cancel</a>
-    </form>
+    </div>
 </div>
+
+<script>
+// Enhanced form interactions and validation
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('rideCreationForm');
+    const steps = document.querySelectorAll('.step-item');
+    const sections = document.querySelectorAll('.form-section');
+    let currentStep = 1;
+    
+    // Initialize form
+    updateProgress();
+    
+    // Form validation and step progression
+    function validateStep(step) {
+        const section = document.querySelector(`[data-section="${step}"]`);
+        const requiredInputs = section.querySelectorAll('[required]');
+        let isValid = true;
+        
+        requiredInputs.forEach(input => {
+            if (!input.value.trim()) {
+                isValid = false;
+                showFieldError(input);
+            } else {
+                clearFieldError(input);
+            }
+        });
+        
+        return isValid;
+    }
+    
+    function showFieldError(input) {
+        const wrapper = input.closest('.input-wrapper');
+        wrapper.classList.add('error');
+        
+        // Add shake animation
+        wrapper.style.animation = 'shake 0.5s ease-in-out';
+        setTimeout(() => {
+            wrapper.style.animation = '';
+        }, 500);
+    }
+    
+    function clearFieldError(input) {
+        const wrapper = input.closest('.input-wrapper');
+        wrapper.classList.remove('error');
+    }
+    
+    function updateProgress() {
+        // Update step indicators
+        steps.forEach((step, index) => {
+            const stepNum = index + 1;
+            if (stepNum < currentStep) {
+                step.classList.add('completed');
+                step.classList.remove('active');
+            } else if (stepNum === currentStep) {
+                step.classList.add('active');
+                step.classList.remove('completed');
+            } else {
+                step.classList.remove('active', 'completed');
+            }
+        });
+        
+        // Update section visibility
+        sections.forEach((section, index) => {
+            const sectionNum = index + 1;
+            if (sectionNum === currentStep) {
+                section.classList.add('active');
+            } else {
+                section.classList.remove('active');
+            }
+        });
+    }
+    
+    // Auto-advance steps on field completion
+    function checkAutoAdvance() {
+        if (currentStep < 3 && validateStep(currentStep)) {
+            setTimeout(() => {
+                currentStep++;
+                updateProgress();
+                
+                // Smooth scroll to new section
+                const newSection = document.querySelector(`[data-section="${currentStep}"]`);
+                newSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 500);
+        }
+    }
+    
+    // Enhanced input interactions
+    const inputs = document.querySelectorAll('.form-input-enhanced');
+    inputs.forEach(input => {
+        const wrapper = input.closest('.input-wrapper');
+        
+        // Focus effects
+        input.addEventListener('focus', function() {
+            wrapper.classList.add('focused');
+        });
+        
+        input.addEventListener('blur', function() {
+            wrapper.classList.remove('focused');
+            if (this.value) {
+                wrapper.classList.add('filled');
+            } else {
+                wrapper.classList.remove('filled');
+            }
+        });
+        
+        // Input validation
+        input.addEventListener('change', function() {
+            clearFieldError(this);
+            
+            // Check if current step is complete for auto-advance
+            if (this.hasAttribute('required')) {
+                checkAutoAdvance();
+            }
+        });
+        
+        // Initial state
+        if (input.value) {
+            wrapper.classList.add('filled');
+        }
+    });
+    
+    // Form submission with validation
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Validate all steps
+        let allValid = true;
+        for (let i = 1; i <= 3; i++) {
+            if (!validateStep(i)) {
+                allValid = false;
+                if (currentStep > i) {
+                    currentStep = i;
+                    updateProgress();
+                }
+                break;
+            }
+        }
+        
+        if (allValid) {
+            // Add loading state
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+            
+            // Submit form
+            setTimeout(() => {
+                form.submit();
+            }, 1000);
+        }
+    });
+    
+    // City selection validation
+    const pickupCity = document.getElementById('pickup_city');
+    const dropoffCity = document.getElementById('dropoff_city');
+    
+    function validateCitySelection() {
+        if (pickupCity.value && dropoffCity.value && pickupCity.value === dropoffCity.value) {
+            showFieldError(dropoffCity);
+            
+            // Show error message
+            const errorMsg = document.createElement('div');
+            errorMsg.className = 'field-error-message';
+            errorMsg.textContent = 'Pickup and drop-off cities must be different';
+            
+            const existingError = dropoffCity.parentNode.querySelector('.field-error-message');
+            if (existingError) {
+                existingError.remove();
+            }
+            
+            dropoffCity.parentNode.appendChild(errorMsg);
+            
+            return false;
+        } else {
+            // Remove error message
+            const errorMsg = dropoffCity.parentNode.querySelector('.field-error-message');
+            if (errorMsg) {
+                errorMsg.remove();
+            }
+            return true;
+        }
+    }
+    
+    pickupCity.addEventListener('change', validateCitySelection);
+    dropoffCity.addEventListener('change', validateCitySelection);
+});
+
+// CSS animations for shake effect
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+    
+    .field-error-message {
+        color: var(--danger-color);
+        font-size: 0.75rem;
+        margin-top: 4px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    .field-error-message::before {
+        content: "⚠";
+    }
+`;
+document.head.appendChild(style);
+</script>
+
+<style>
+/* =============================================
+   ENHANCED RIDE CREATION FORM STYLES
+   ============================================= */
+
+.ride-creation-workspace {
+    min-height: 100vh;
+    position: relative;
+    background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 50%, var(--gray-50) 100%);
+    overflow-x: hidden;
+}
+
+/* Hero Background */
+.creation-hero {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60vh;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    z-index: 0;
+    overflow: hidden;
+}
+
+.hero-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="creation-grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="%23ffffff" stroke-width="1" opacity="0.1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23creation-grid)"/></svg>');
+    opacity: 0.3;
+}
+
+.hero-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+/* Main Container */
+.creation-container {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 24px;
+}
+
+/* Header Section */
+.creation-header {
+    margin-bottom: 40px;
+}
+
+.breadcrumb-navigation {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+    font-size: 0.875rem;
+}
+
+.breadcrumb-item {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: var(--transition-fast);
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.breadcrumb-item:hover {
+    color: var(--white);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.breadcrumb-arrow {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.75rem;
+}
+
+.breadcrumb-current {
+    color: var(--white);
+    font-weight: 600;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 40px;
+}
+
+.creation-title {
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 800;
+    color: var(--white);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+}
+
+.creation-title i {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 12px;
+    border-radius: 16px;
+    font-size: 0.8em;
+}
+
+.creation-subtitle {
+    font-size: 1.25rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+    max-width: 600px;
+}
+
+.creation-stats {
+    flex-shrink: 0;
+}
+
+.stat-bubble {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 200px;
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--success-color);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 1.25rem;
+}
+
+.stat-value {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--white);
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-top: 4px;
+}
+
+/* Form Card Container */
+.form-card-container {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 32px;
+    align-items: start;
+}
+
+.form-card {
+    background: var(--white);
+    border-radius: var(--border-radius-xl);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--gray-200);
+    overflow: hidden;
+    position: relative;
+}
+
+.form-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-light) 100%);
+}
+
+/* Progress Header */
+.progress-header {
+    padding: 32px 32px 24px;
+    background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.progress-steps {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+.step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    z-index: 2;
+}
+
+.step-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--gray-300);
+    color: var(--gray-600);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.125rem;
+    transition: all var(--transition-normal);
+    border: 3px solid var(--white);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.step-item.active .step-circle {
+    background: var(--primary-color);
+    color: var(--white);
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+}
+
+.step-item.completed .step-circle {
+    background: var(--success-color);
+    color: var(--white);
+}
+
+.step-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--gray-600);
+    transition: var(--transition-fast);
+}
+
+.step-item.active .step-label {
+    color: var(--primary-color);
+}
+
+.step-item.completed .step-label {
+    color: var(--success-color);
+}
+
+.progress-line {
+    position: absolute;
+    top: 24px;
+    left: 20%;
+    right: 20%;
+    height: 2px;
+    background: var(--gray-300);
+    z-index: 1;
+}
+
+/* Enhanced Form */
+.enhanced-ride-form {
+    padding: 0;
+}
+
+.form-section {
+    padding: 32px;
+    display: none;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease-in-out;
+}
+
+.form-section.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+    animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.section-header {
+    margin-bottom: 32px;
+    text-align: center;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--gray-900);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.section-title i {
+    color: var(--primary-color);
+    background: rgba(37, 99, 235, 0.1);
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.section-description {
+    font-size: 1rem;
+    color: var(--gray-600);
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* Input Styling */
+.input-wrapper {
+    position: relative;
+    margin-bottom: 24px;
+}
+
+.input-wrapper.enhanced {
+    margin-bottom: 32px;
+}
+
+.floating-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: var(--gray-700);
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    position: static;
+    margin-bottom: 12px;
+}
+
+.floating-label i {
+    color: var(--primary-color);
+    font-size: 0.875rem;
+}
+
+.form-input-enhanced {
+    width: 100%;
+    padding: 16px 20px;
+    border: 2px solid var(--gray-200);
+    border-radius: var(--border-radius);
+    background: var(--white);
+    color: var(--gray-900);
+    font-size: 1rem;
+    transition: all var(--transition-fast);
+    position: relative;
+    z-index: 2;
+}
+
+.form-input-enhanced:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.input-wrapper.focused .form-input-enhanced {
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+}
+
+.input-wrapper.error .form-input-enhanced {
+    border-color: var(--danger-color);
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.input-indicator {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--gray-300);
+    transition: all var(--transition-fast);
+    z-index: 3;
+    margin-top: 16px;
+}
+
+.input-wrapper.focused .input-indicator {
+    background: var(--primary-color);
+    transform: translateY(-50%) scale(1.2);
+}
+
+.input-wrapper.filled .input-indicator {
+    background: var(--success-color);
+}
+
+.input-wrapper.error .input-indicator {
+    background: var(--danger-color);
+}
+
+.input-focus-ring {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: var(--border-radius);
+    background: linear-gradient(45deg, var(--primary-color), var(--primary-light));
+    opacity: 0;
+    transform: scale(1.02);
+    transition: all var(--transition-fast);
+    z-index: 1;
+    margin-top: 32px;
+}
+
+.input-wrapper.focused .input-focus-ring {
+    opacity: 0.1;
+    transform: scale(1);
+}
+
+.input-help {
+    font-size: 0.75rem;
+    color: var(--gray-500);
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Grid Layouts */
+.route-selection-grid {
+    margin-bottom: 32px;
+}
+
+.city-selector-group {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 24px;
+    align-items: end;
+}
+
+.route-connector-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 60px;
+    position: relative;
+}
+
+.connector-line {
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    opacity: 0.3;
+}
+
+.connector-dot {
+    background: var(--primary-color);
+    border: 3px solid var(--white);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 1rem;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    z-index: 2;
+    position: relative;
+}
+
+.location-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.schedule-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.capacity-pricing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+/* Price Input Special Styling */
+.price-wrapper {
+    position: relative;
+}
+
+.price-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.currency-prefix {
+    position: absolute;
+    left: 20px;
+    color: var(--gray-600);
+    font-weight: 700;
+    font-size: 1rem;
+    z-index: 3;
+}
+
+.price-input {
+    padding-left: 44px !important;
+    padding-right: 60px !important;
+    font-weight: 600;
+    text-align: center;
+}
+
+.currency-suffix {
+    position: absolute;
+    right: 20px;
+    color: var(--gray-500);
+    font-size: 0.875rem;
+    font-weight: 600;
+    z-index: 3;
+}
+
+.pricing-tips {
+    margin-top: 8px;
+    font-size: 0.75rem;
+    color: var(--gray-600);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-style: italic;
+}
+
+.pricing-tips i {
+    color: var(--warning-color);
+}
+
+/* Notes Section */
+.notes-section {
+    margin-top: 24px;
+}
+
+.notes-textarea {
+    resize: vertical;
+    min-height: 100px;
+    font-family: inherit;
+    line-height: 1.6;
+}
+
+.optional-badge {
+    background: var(--gray-100);
+    color: var(--gray-600);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    margin-left: 8px;
+}
+
+/* Form Actions */
+.form-actions {
+    padding: 32px;
+    background: var(--gray-50);
+    border-top: 1px solid var(--gray-200);
+}
+
+.actions-container {
+    display: flex;
+    gap: 16px;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.btn-secondary-action {
+    padding: 14px 24px;
+    background: var(--white);
+    color: var(--gray-700);
+    border: 2px solid var(--gray-300);
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.btn-secondary-action:hover {
+    background: var(--gray-50);
+    border-color: var(--gray-400);
+    transform: translateY(-1px);
+}
+
+.btn-primary-action {
+    flex: 1;
+    padding: 16px 32px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: var(--white);
+    border: none;
+    border-radius: var(--border-radius);
+    font-weight: 800;
+    font-size: 1.125rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
+    overflow: hidden;
+    border: 2px solid transparent;
+}
+
+.btn-primary-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+}
+
+.btn-primary-action:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+    z-index: 2;
+}
+
+.btn-shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s;
+}
+
+.btn-primary-action:hover .btn-shine {
+    left: 100%;
+}
+
+.btn-pulse {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.3s ease-out;
+}
+
+.btn-primary-action:active .btn-pulse {
+    opacity: 1;
+    transform: scale(1);
+    transition: all 0.1s ease-out;
+}
+
+.btn-primary-action.loading .btn-content {
+    opacity: 0;
+}
+
+.btn-primary-action.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.form-footer-info {
+    text-align: center;
+}
+
+.security-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: rgba(5, 150, 105, 0.05);
+    color: var(--success-color);
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 1px solid rgba(5, 150, 105, 0.2);
+}
+
+/* Quick Help Panel */
+.quick-help-panel {
+    background: var(--white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--gray-200);
+    position: sticky;
+    top: 24px;
+    height: fit-content;
+}
+
+.help-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.help-title {
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: var(--gray-900);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.help-title i {
+    color: var(--info-color);
+}
+
+.help-content {
+    padding: 20px 24px 24px;
+}
+
+.tip-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.tip-item:last-child {
+    margin-bottom: 0;
+}
+
+.tip-icon {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    background: var(--gray-100);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    font-size: 0.875rem;
+}
+
+.tip-text {
+    font-size: 0.875rem;
+    color: var(--gray-700);
+    line-height: 1.5;
+}
+
+.tip-text strong {
+    color: var(--gray-900);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .form-card-container {
+        grid-template-columns: 1fr 280px;
+        gap: 24px;
+    }
+}
+
+@media (max-width: 991px) {
+    .form-card-container {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+    
+    .quick-help-panel {
+        order: 2;
+        position: static;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        gap: 24px;
+        text-align: center;
+    }
+    
+    .creation-title {
+        justify-content: center;
+    }
+    
+    .city-selector-group {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .route-connector-visual {
+        height: 40px;
+        transform: rotate(90deg);
+    }
+    
+    .location-details-grid,
+    .schedule-grid,
+    .capacity-pricing-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+
+@media (max-width: 767px) {
+    .creation-container {
+        padding: 20px 16px;
+    }
+    
+    .creation-header {
+        margin-bottom: 24px;
+    }
+    
+    .creation-title {
+        font-size: 2rem;
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .form-card {
+        border-radius: var(--border-radius-lg);
+    }
+    
+    .progress-header,
+    .form-section,
+    .form-actions {
+        padding: 24px 20px;
+    }
+    
+    .progress-steps {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .progress-line {
+        display: none;
+    }
+    
+    .step-item {
+        flex-direction: row;
+        gap: 12px;
+    }
+    
+    .actions-container {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .btn-secondary-action {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .stat-bubble {
+        min-width: auto;
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 575px) {
+    .breadcrumb-navigation {
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+    
+    .breadcrumb-item,
+    .breadcrumb-current {
+        padding: 4px 8px;
+        font-size: 0.8rem;
+    }
+    
+    .section-title {
+        font-size: 1.25rem;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .help-content {
+        padding: 16px 20px 20px;
+    }
+    
+    .tip-item {
+        margin-bottom: 16px;
+    }
+}
+</style>
 {% endblock %}

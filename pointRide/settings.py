@@ -11,10 +11,12 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
 from pathlib import Path
+from decouple import config, Csv  # Import decouple for environment variables
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
 # STATIC_URL = 'static/'
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
@@ -26,13 +28,19 @@ STATICFILES_DIRS = [
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-8$ydc#0bqfrzbi-7b+lwv#+oudqa%%b5v#qk_(u+)q@*7ullx3'
+# Read SECRET_KEY from environment variable with a fallback for development
+SECRET_KEY = config('SECRET_KEY', default='django-insecure-8$ydc#0bqfrzbi-7b+lwv#+oudqa%%b5v#qk_(u+)q@*7ullx3')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Read DEBUG from environment variable, defaults to True for development
+DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver']  # Added testserver for testing
+# Read ALLOWED_HOSTS from environment variable as a comma-separated list
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,testserver', cast=Csv())
 
+# Google Maps API Configuration
+# This is the key setting you need for your maps functionality
+GOOGLE_MAPS_API_KEY = config('GOOGLE_MAPS_API_KEY', default='')
 
 # Application definition
 
@@ -142,12 +150,13 @@ LOGOUT_REDIRECT_URL = '/'
 
 # Email configuration (for development)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'localhost'
-EMAIL_PORT = 1025
-EMAIL_USE_TLS = False
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
-DEFAULT_FROM_EMAIL = 'noreply@pointride.com'
+EMAIL_HOST = config('EMAIL_HOST', default='localhost')
+EMAIL_PORT = config('EMAIL_PORT', default=1025, cast=int)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=False, cast=bool)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@pointride.com')
+
 # Logging configuration
 LOGGING = {
     'version': 1,
