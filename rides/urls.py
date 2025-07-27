@@ -10,7 +10,7 @@ urlpatterns = [
     path('', views.home_search, name='home_search'),
     path('search/', views.search_rides, name='search_rides'),
     path('search/<int:pickup_city_id>/<int:dropoff_city_id>/', 
-         views.search_rides, name='search_rides_with_cities'),
+        views.search_rides, name='search_rides_with_cities'),
     
     # Ride management
     path('create/', views.create_ride, name='create_ride'),

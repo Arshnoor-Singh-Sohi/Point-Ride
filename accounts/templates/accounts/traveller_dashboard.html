@@ -8,9 +8,11 @@
     <div class="text-center mb-5">
         <h1 class="fw-bold">Welcome, {{ request.user.full_legal_name }} 👋</h1>
         <p class="text-muted">Find your next ride and explore Ontario.</p>
+        <p class="text-muted">Your traveler dashboard.</p>
     </div>
 
     <div class="row g-4">
+        <!-- Find a Ride Card (Their version) -->
         <div class="col-md-6">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-body">
@@ -21,6 +23,7 @@
             </div>
         </div>
 
+        <!-- My Bookings Card (Their version) -->
         <div class="col-md-6">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-body">
@@ -31,6 +34,7 @@
             </div>
         </div>
 
+        <!-- Browse Rides Card (Their version) -->
         <div class="col-md-6">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-body">
@@ -41,12 +45,13 @@
             </div>
         </div>
 
+        <!-- Profile Settings Card (Your version with edit profile link) -->
         <div class="col-md-6">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Want to Drive?</h5>
-                    <p class="card-text">Switch to offering rides as a driver.</p>
-                    <a href="{% url 'accounts:driver_registration_step1' %}" class="btn btn-outline-secondary">Become a Driver</a>
+                    <h5 class="card-title">Profile Settings</h5>
+                    <p class="card-text">View or update your travel preferences and personal info.</p>
+                    <a href="{% url 'accounts:edit_profile' %}" class="btn btn-outline-secondary">Edit Profile</a>
                 </div>
             </div>
         </div>

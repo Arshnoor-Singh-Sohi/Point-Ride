@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.urls import path, include # Import include
 from django.conf import settings # Import settings to access MEDIA_URL/MEDIA_ROOT
 from django.conf.urls.static import static # Import static to serve media files
+from django.contrib.auth import views as auth_views
 
 # Import the home view from the accounts app
 from accounts.views import home
@@ -23,6 +24,23 @@ urlpatterns = [
 
     # Set the home view for the root URL
     path('', home, name='home'), # This uses the 'home' view from accounts.views
+
+    # ===================================
+    # FORGOT PASSWORD URLS
+    # ===================================
+    
+    path('forgot-password/', auth_views.PasswordResetView.as_view(
+        template_name='accounts/password_reset.html'
+    ), name='password_reset'),
+    path('forgot-password/done/', auth_views.PasswordResetDoneView.as_view(
+        template_name='accounts/password_reset_done.html'
+    ), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
+        template_name='accounts/password_reset_confirm.html'
+    ), name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(
+        template_name='accounts/password_reset_complete.html'
+    ), name='password_reset_complete')
 
     # Add URLs for other apps as they are developed:
     # path('verification/', include('verification.urls')),

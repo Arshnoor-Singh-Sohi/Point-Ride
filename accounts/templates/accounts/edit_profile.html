@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Edit Your Profile</h4>
+                </div>
+                <div class="card-body">
+
+                    <!-- === User Form === -->
+                    <form method="post" enctype="multipart/form-data" action="">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2">Personal Information</h5>
+                            <div class="row g-3 mt-2">
+                                <div class="col-md-6">
+                                    <label for="id_full_legal_name" class="form-label">Full Legal Name</label>
+                                    <input type="text" class="form-control" id="id_full_legal_name" name="full_legal_name"
+                                           value="{{ user.full_legal_name }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="id_email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="id_email_display" value="{{ user.email }}" disabled>
+                                    <input type="hidden" name="email" value="{{ user.email }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="id_phone_number" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="id_phone_number" name="phone_number"
+                                           value="{{ user.phone_number }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="id_profile_picture" class="form-label">Profile Picture</label>
+                                    <input type="file" class="form-control" id="id_profile_picture" name="profile_picture">
+                                    {% if user.profile_picture %}
+                                        <div class="mt-2 d-flex align-items-center gap-2">
+                                            <img src="{{ user.profile_picture.url }}" alt="Current Profile" style="width: 40px; height: 40px; object-fit: cover; border-radius: 5px;">
+                                            <small class="text-muted">Current Picture</small>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="id_current_home_address" class="form-label">Home Address</label>
+                                    <input type="text" class="form-control" id="id_current_home_address" name="current_home_address"
+                                           value="{{ user.current_home_address }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="id_starting_city" class="form-label">Starting City</label>
+                                    <input type="text" class="form-control" id="id_starting_city" name="starting_city"
+                                           value="{{ user.starting_city }}">
+                                </div>
+                                <div class="col-12">
+                                    <label for="id_bio" class="form-label">Bio</label>
+                                    <textarea class="form-control" id="id_bio" name="bio" rows="3">{{ user.bio }}</textarea>
+                                </div>
+                                <div class="col-12">
+                                    <label for="id_languages_spoken" class="form-label">Languages Spoken (comma separated)</label>
+                                    <input type="text" class="form-control" id="id_languages_spoken" name="languages_spoken"
+                                           value="{{ user.languages_spoken|join:', ' }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary">Save Personal Info</button>
+                        </div>
+                    </form>
+
+                    <!-- === Driver Form === -->
+                    {% if user.is_driver and driver_profile %}
+                    <hr class="my-4">
+                    <form method="post" action="{% url 'accounts:update_driver' %}">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2">Driver Information</h5>
+                            <div class="row g-3 mt-2">
+                                <div class="col-md-6">
+                                    <label for="id_license_number" class="form-label">License Number</label>
+                                    <input type="text" class="form-control" id="id_license_number" name="license_number"
+                                           value="{{ driver_profile.license_number }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="id_license_expiry_date" class="form-label">License Expiry Date</label>
+                                    <input type="date" class="form-control" id="id_license_expiry_date" name="license_expiry_date"
+                                           value="{{ driver_profile.license_expiry_date|date:'Y-m-d' }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="id_vehicle_make" class="form-label">Vehicle Make</label>
+                                    <input type="text" class="form-control" id="id_vehicle_make" name="vehicle_make"
+                                           value="{{ driver_profile.vehicle_make }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="id_vehicle_model" class="form-label">Vehicle Model</label>
+                                    <input type="text" class="form-control" id="id_vehicle_model" name="vehicle_model"
+                                           value="{{ driver_profile.vehicle_model }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="id_vehicle_year" class="form-label">Vehicle Year</label>
+                                    <input type="number" class="form-control" id="id_vehicle_year" name="vehicle_year"
+                                           value="{{ driver_profile.vehicle_year }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="id_vehicle_registration_number" class="form-label">Registration Number</label>
+                                    <input type="text" class="form-control" id="id_vehicle_registration_number" name="vehicle_registration_number"
+                                           value="{{ driver_profile.vehicle_registration_number }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-warning">Save Driver Info</button>
+                        </div>
+                    </form>
+                    {% endif %}
+
+                    <!-- Cancel Button -->
+                    <div class="d-flex justify-content-start mt-4">
+                        <a href="{% if user.is_driver %}{% url 'accounts:driver_dashboard' %}{% else %}{% url 'accounts:traveller_dashboard' %}{% endif %}"
+                           class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
