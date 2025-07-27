@@ -1,60 +1,919 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Traveller Dashboard{% endblock %}
+{% block title %}Professional Dashboard - pointRide{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="text-center mb-5">
-        <h1 class="fw-bold">Welcome, {{ request.user.full_legal_name }} 👋</h1>
-        <p class="text-muted">Find your next ride and explore Ontario.</p>
-        <p class="text-muted">Your traveler dashboard.</p>
-    </div>
-
-    <div class="row g-4">
-        <!-- Find a Ride Card (Their version) -->
-        <div class="col-md-6">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body">
-                    <h5 class="card-title">Find a Ride</h5>
-                    <p class="card-text">Search for rides to your destination.</p>
-                    <a href="{% url 'rides:home_search' %}" class="btn btn-primary">Search Rides</a>
+<div class="traveller-dashboard">
+    <!-- Dashboard Header Section -->
+    <section class="dashboard-header">
+        <div class="container-fluid">
+            <div class="dashboard-hero">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <div class="welcome-section">
+                            <div class="member-indicator">
+                                <span class="member-badge professional">
+                                    <i class="bi bi-person-badge-fill me-2"></i>
+                                    Professional Member
+                                </span>
+                            </div>
+                            <h1 class="welcome-title">
+                                Welcome, <span class="user-name">{{ request.user.full_legal_name }}</span>
+                            </h1>
+                            <p class="welcome-subtitle">
+                                Your professional travel dashboard is ready. Find rides, manage bookings, and explore Ontario with confidence through our verified network.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="dashboard-stats">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="bi bi-person-check-fill"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number">Professional</div>
+                                    <div class="stat-label">Member Status</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+    </section>
 
-        <!-- My Bookings Card (Their version) -->
-        <div class="col-md-6">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body">
-                    <h5 class="card-title">My Bookings</h5>
-                    <p class="card-text">View your current and past ride bookings.</p>
-                    <a href="{% url 'rides:my_rides' %}" class="btn btn-success">View Bookings</a>
+    <!-- Main Dashboard Content -->
+    <section class="dashboard-content">
+        <div class="container-fluid">
+            <!-- Primary Actions Row -->
+            <div class="row g-4 mb-5">
+                <!-- Find a Ride Card - Primary Action -->
+                <div class="col-lg-6">
+                    <div class="action-card primary-card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="bi bi-search"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">Find Professional Rides</h3>
+                                <span class="card-badge featured">Most Popular</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-description">
+                                Search for rides to your destination with our advanced filtering system. Connect with verified professional drivers across Ontario.
+                            </p>
+                            <div class="card-features">
+                                <div class="feature-item">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span>Verified professional drivers</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span>Real-time availability</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span>Transparent pricing</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{% url 'rides:home_search' %}" class="btn btn-primary btn-lg w-100">
+                                <i class="bi bi-search me-2"></i>
+                                Search Rides
+                            </a>
+                            <small class="enhancement-note">
+                                <i class="bi bi-shield-check me-1"></i>
+                                All drivers verified for your safety
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- My Bookings Card - Secondary Action -->
+                <div class="col-lg-6">
+                    <div class="action-card secondary-card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="bi bi-ticket-detailed-fill"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">My Bookings</h3>
+                                <span class="card-badge management">Management</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-description">
+                                View your current and past ride bookings. Track ride status, manage reservations, and access important trip details.
+                            </p>
+                            <div class="card-features">
+                                <div class="feature-item">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span>Real-time booking status</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span>Trip history & receipts</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{% url 'rides:my_rides' %}" class="btn btn-success btn-lg w-100">
+                                <i class="bi bi-ticket-detailed me-2"></i>
+                                View Bookings
+                            </a>
+                            <small class="enhancement-note">
+                                <i class="bi bi-clock-history me-1"></i>
+                                Complete booking management
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Secondary Actions Row -->
+            <div class="row g-4 mb-5">
+                <!-- Browse All Rides -->
+                <div class="col-lg-6">
+                    <div class="action-card discovery-card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="bi bi-compass-fill"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">Browse Rides</h3>
+                                <span class="card-badge discovery">Discovery</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-description">
+                                Explore all available rides across Ontario. Discover new routes, compare prices, and find the perfect transportation option.
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{% url 'rides:search_rides' %}" class="btn btn-info btn-lg w-100">
+                                <i class="bi bi-compass me-2"></i>
+                                Browse All
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Settings -->
+                <div class="col-lg-6">
+                    <div class="action-card settings-card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="bi bi-person-gear"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">Profile Settings</h3>
+                                <span class="card-badge preferences">Preferences</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-description">
+                                Update your travel preferences, personal information, and account settings for an optimized experience.
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{% url 'accounts:edit_profile' %}" class="btn btn-outline-primary btn-lg w-100">
+                                <i class="bi bi-person-gear me-2"></i>
+                                Edit Profile
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Action Banner -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="quick-action-banner">
+                        <div class="banner-content">
+                            <div class="banner-icon">
+                                <i class="bi bi-car-front-fill"></i>
+                            </div>
+                            <div class="banner-text">
+                                <h4 class="banner-title">Interested in Driving?</h4>
+                                <p class="banner-description">
+                                    Join our professional driver network and start earning with your commute. Flexible schedule, verified passengers, competitive rates.
+                                </p>
+                            </div>
+                            <div class="banner-action">
+                                <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#becomeDriverModal">
+                                    <i class="bi bi-plus-circle me-2"></i>
+                                    Become a Driver
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Member Benefits Section -->
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="benefits-section">
+                        <div class="benefits-header">
+                            <h3 class="benefits-title">Your Professional Member Benefits</h3>
+                            <p class="benefits-subtitle">Exclusive advantages of being part of pointRide's professional network</p>
+                        </div>
+                        <div class="row g-4">
+                            <div class="col-lg-3 col-md-6">
+                                <div class="benefit-item">
+                                    <div class="benefit-icon">
+                                        <i class="bi bi-patch-check-fill"></i>
+                                    </div>
+                                    <div class="benefit-content">
+                                        <h5 class="benefit-title">Verified Network</h5>
+                                        <p class="benefit-description">All drivers undergo professional verification</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="benefit-item">
+                                    <div class="benefit-icon">
+                                        <i class="bi bi-headset"></i>
+                                    </div>
+                                    <div class="benefit-content">
+                                        <h5 class="benefit-title">24/7 Support</h5>
+                                        <p class="benefit-description">Round-the-clock assistance when you need it</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="benefit-item">
+                                    <div class="benefit-icon">
+                                        <i class="bi bi-award-fill"></i>
+                                    </div>
+                                    <div class="benefit-content">
+                                        <h5 class="benefit-title">Premium Experience</h5>
+                                        <p class="benefit-description">Enhanced features and priority booking</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="benefit-item">
+                                    <div class="benefit-icon">
+                                        <i class="bi bi-lock-fill"></i>
+                                    </div>
+                                    <div class="benefit-content">
+                                        <h5 class="benefit-title">Secure Payments</h5>
+                                        <p class="benefit-description">Bank-grade security for all transactions</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+    </section>
+</div>
 
-        <!-- Browse Rides Card (Their version) -->
-        <div class="col-md-6">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body">
-                    <h5 class="card-title">Browse Rides</h5>
-                    <p class="card-text">See all available rides across Ontario.</p>
-                    <a href="{% url 'rides:search_rides' %}" class="btn btn-info">Browse All</a>
+<!-- Become Driver Modal -->
+<div class="modal fade" id="becomeDriverModal" tabindex="-1" aria-labelledby="becomeDriverModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content enterprise-modal">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="becomeDriverModalLabel">
+                    <i class="bi bi-car-front me-2 text-primary"></i>
+                    Become a pointRide Professional Driver
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="fw-bold mb-3">Professional Requirements</h6>
+                        <ul class="requirements-list">
+                            <li><i class="bi bi-check-circle text-success me-2"></i>Valid Ontario driver's license</li>
+                            <li><i class="bi bi-check-circle text-success me-2"></i>Vehicle registration & insurance</li>
+                            <li><i class="bi bi-check-circle text-success me-2"></i>Clean driving record</li>
+                            <li><i class="bi bi-check-circle text-success me-2"></i>Professional background verification</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-bold mb-3">Driver Benefits</h6>
+                        <ul class="benefits-list">
+                            <li><i class="bi bi-currency-dollar text-success me-2"></i>Competitive earnings</li>
+                            <li><i class="bi bi-clock text-success me-2"></i>Flexible schedule</li>
+                            <li><i class="bi bi-people text-success me-2"></i>Professional network</li>
+                            <li><i class="bi bi-shield-check text-success me-2"></i>Insurance coverage</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="upgrade-notice">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-info-circle me-3 text-primary"></i>
+                        <div>
+                            <strong>Ready to Upgrade?</strong><br>
+                            <small class="text-muted">Transform your commute into earnings with pointRide's professional driver program</small>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Profile Settings Card (Your version with edit profile link) -->
-        <div class="col-md-6">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body">
-                    <h5 class="card-title">Profile Settings</h5>
-                    <p class="card-text">View or update your travel preferences and personal info.</p>
-                    <a href="{% url 'accounts:edit_profile' %}" class="btn btn-outline-secondary">Edit Profile</a>
-                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    Maybe Later
+                </button>
+                <a href="{% url 'accounts:driver_registration_step1' %}" class="btn btn-primary">
+                    <i class="bi bi-arrow-right me-2"></i>Start Driver Application
+                </a>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+/* =============================================
+   TRAVELLER DASHBOARD STYLES
+   ============================================= */
+
+.traveller-dashboard {
+    min-height: calc(100vh - 160px);
+    background: var(--gray-50);
+}
+
+/* Dashboard Header */
+.dashboard-header {
+    background: linear-gradient(135deg, var(--white) 0%, var(--gray-50) 100%);
+    padding: 40px 0;
+    border-bottom: 1px solid var(--gray-200);
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30%;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="traveller-grid" width="40" height="40" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="%23e2e8f0" opacity="0.5"/></pattern></defs><rect width="100%" height="100%" fill="url(%23traveller-grid)"/></svg>');
+    opacity: 0.6;
+    z-index: 0;
+}
+
+.dashboard-hero {
+    position: relative;
+    z-index: 1;
+}
+
+.member-indicator {
+    margin-bottom: 16px;
+}
+
+.member-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.member-badge.professional {
+    background: rgba(37, 99, 235, 0.1);
+    color: var(--primary-color);
+    border: 1px solid rgba(37, 99, 235, 0.2);
+}
+
+.welcome-title {
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 800;
+    color: var(--gray-900);
+    margin-bottom: 12px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+}
+
+.user-name {
+    color: var(--primary-color);
+}
+
+.welcome-subtitle {
+    font-size: 1.125rem;
+    color: var(--gray-600);
+    line-height: 1.6;
+    max-width: 600px;
+}
+
+/* Dashboard Stats */
+.dashboard-stats {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.stat-card {
+    background: var(--white);
+    padding: 24px;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--gray-200);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 200px;
+}
+
+.stat-icon {
+    width: 56px;
+    height: 56px;
+    background: var(--primary-color);
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-icon i {
+    font-size: 1.5rem;
+    color: var(--white);
+}
+
+.stat-number {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: var(--gray-600);
+    margin-top: 4px;
+}
+
+/* Dashboard Content */
+.dashboard-content {
+    padding: 40px 0;
+}
+
+/* Action Cards */
+.action-card {
+    background: var(--white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-200);
+    transition: var(--transition-normal);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+.action-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    transition: var(--transition-normal);
+}
+
+.primary-card::before {
+    background: var(--primary-color);
+}
+
+.secondary-card::before {
+    background: var(--success-color);
+}
+
+.discovery-card::before {
+    background: var(--info-color);
+}
+
+.settings-card::before {
+    background: var(--secondary-color);
+}
+
+.action-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.card-header {
+    padding: 24px 24px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.card-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.primary-card .card-icon {
+    background: var(--primary-color);
+}
+
+.secondary-card .card-icon {
+    background: var(--success-color);
+}
+
+.discovery-card .card-icon {
+    background: var(--info-color);
+}
+
+.settings-card .card-icon {
+    background: var(--secondary-color);
+}
+
+.card-icon i {
+    font-size: 1.5rem;
+    color: var(--white);
+}
+
+.card-title-section {
+    flex: 1;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 8px;
+    line-height: 1.3;
+}
+
+.card-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.card-badge.featured {
+    background: rgba(37, 99, 235, 0.1);
+    color: var(--primary-color);
+}
+
+.card-badge.management {
+    background: rgba(5, 150, 105, 0.1);
+    color: var(--success-color);
+}
+
+.card-badge.discovery {
+    background: rgba(8, 145, 178, 0.1);
+    color: var(--info-color);
+}
+
+.card-badge.preferences {
+    background: rgba(100, 116, 139, 0.1);
+    color: var(--secondary-color);
+}
+
+.card-body {
+    padding: 0 24px;
+    flex: 1;
+}
+
+.card-description {
+    color: var(--gray-600);
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.card-features {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+    color: var(--gray-700);
+}
+
+.feature-item .text-success {
+    color: var(--success-color) !important;
+}
+
+.feature-item i.text-success {
+    color: var(--success-color) !important;
+    opacity: 1;
+}
+
+.card-footer {
+    padding: 20px 24px 24px;
+    margin-top: auto;
+}
+
+.enhancement-note {
+    display: block;
+    margin-top: 12px;
+    color: var(--gray-500);
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+.enhancement-note i {
+    color: var(--success-color);
+}
+
+/* Quick Action Banner */
+.quick-action-banner {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    border-radius: var(--border-radius-lg);
+    padding: 32px;
+    color: var(--white);
+    position: relative;
+    overflow: hidden;
+}
+
+.quick-action-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40%;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="banner-pattern" width="60" height="60" patternUnits="userSpaceOnUse"><circle cx="30" cy="30" r="2" fill="%23ffffff" fill-opacity="0.1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23banner-pattern)"/></svg>');
+    z-index: 0;
+}
+
+.banner-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.banner-icon {
+    width: 64px;
+    height: 64px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.banner-icon i {
+    font-size: 1.75rem;
+    color: var(--white);
+}
+
+.banner-text {
+    flex: 1;
+}
+
+.banner-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--white);
+}
+
+.banner-description {
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.banner-action {
+    flex-shrink: 0;
+}
+
+.banner-action .btn {
+    background: var(--white);
+    color: var(--primary-color);
+    border: none;
+    font-weight: 600;
+}
+
+.banner-action .btn:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Member Benefits Section */
+.benefits-section {
+    background: var(--white);
+    border-radius: var(--border-radius-lg);
+    padding: 40px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-200);
+}
+
+.benefits-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.benefits-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 12px;
+}
+
+.benefits-subtitle {
+    color: var(--gray-600);
+    font-size: 1.125rem;
+    margin: 0;
+}
+
+.benefit-item {
+    text-align: center;
+    padding: 20px;
+    transition: var(--transition-fast);
+}
+
+.benefit-item:hover {
+    transform: translateY(-2px);
+}
+
+.benefit-icon {
+    width: 64px;
+    height: 64px;
+    background: var(--gray-50);
+    border: 2px solid var(--gray-200);
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    transition: var(--transition-fast);
+}
+
+.benefit-item:hover .benefit-icon {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.benefit-icon i {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    transition: var(--transition-fast);
+}
+
+.benefit-item:hover .benefit-icon i {
+    color: var(--white);
+}
+
+.benefit-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 8px;
+}
+
+.benefit-description {
+    color: var(--gray-600);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Enhanced Modal */
+.enterprise-modal .modal-content {
+    border-radius: var(--border-radius-lg);
+    border: none;
+    box-shadow: var(--shadow-xl);
+}
+
+.enterprise-modal .modal-header {
+    padding: 24px 32px 16px;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.enterprise-modal .modal-body {
+    padding: 16px 32px 24px;
+}
+
+.enterprise-modal .modal-footer {
+    padding: 16px 32px 24px;
+    border-top: 1px solid var(--gray-200);
+}
+
+.requirements-list,
+.benefits-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.requirements-list li,
+.benefits-list li {
+    padding: 8px 0;
+    display: flex;
+    align-items: center;
+    color: var(--gray-700);
+}
+
+.upgrade-notice {
+    margin-top: 24px;
+    padding: 20px;
+    background: var(--gray-50);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--primary-color);
+}
+
+/* Responsive Design */
+@media (max-width: 991px) {
+    .dashboard-header {
+        padding: 30px 0;
+    }
+    
+    .dashboard-content {
+        padding: 30px 0;
+    }
+    
+    .welcome-title {
+        font-size: 2rem;
+    }
+    
+    .dashboard-stats {
+        justify-content: center;
+        margin-top: 24px;
+    }
+    
+    .banner-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+    }
+    
+    .benefits-section {
+        padding: 30px 24px;
+    }
+}
+
+@media (max-width: 767px) {
+    .dashboard-header {
+        padding: 20px 0;
+    }
+    
+    .dashboard-content {
+        padding: 20px 0;
+    }
+    
+    .card-header {
+        padding: 20px 20px 12px;
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+    }
+    
+    .card-body {
+        padding: 0 20px;
+        text-align: center;
+    }
+    
+    .card-footer {
+        padding: 16px 20px 20px;
+    }
+    
+    .stat-card {
+        flex-direction: column;
+        text-align: center;
+        min-width: auto;
+        gap: 12px;
+    }
+    
+    .feature-item {
+        justify-content: center;
+    }
+    
+    .quick-action-banner {
+        padding: 24px 20px;
+    }
+    
+    .banner-content {
+        gap: 20px;
+    }
+    
+    .benefits-section {
+        padding: 24px 20px;
+    }
+    
+    .benefit-item {
+        margin-bottom: 24px;
+    }
+}
+</style>
 {% endblock %}

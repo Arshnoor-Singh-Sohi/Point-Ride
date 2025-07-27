@@ -1,53 +1,173 @@
 {# templates/home.html #}
 {% extends 'base.html' %}
 
-{% block title %}Welcome to pointRide{% endblock %}
+{% block title %}pointRide - Enterprise Ride Sharing Solutions{% endblock %}
 
 {% block content %}
-    <section class="hero bg-primary text-white text-center py-5 py-md-5">
+    <!-- Hero Section - Enterprise Focus -->
+    <section class="hero-section">
         <div class="container">
-            <h1 class="display-4 fw-bold mb-3">Your Journey, Our Priority.</h1>
-            <p class="lead mb-4">Connect with reliable drivers for comfortable and affordable rides across Ontario, Canada.</p>
-            <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
-                <a href="{% url 'accounts:traveller_registration' %}" class="btn btn-light btn-lg">Find a Ride</a>
-                <a href="{% url 'accounts:driver_registration_step1' %}" class="btn btn-outline-light btn-lg">Offer a Ride</a>
+            <div class="row align-items-center min-vh-75">
+                <div class="col-lg-6 pe-lg-5">
+                    <div class="hero-content">
+                        <div class="badge-container mb-4">
+                            <span class="enterprise-badge">
+                                <i class="bi bi-shield-check me-2"></i>
+                                Trusted by 10,000+ Professionals
+                            </span>
+                        </div>
+                        <h1 class="hero-title">
+                            Professional Ride Sharing
+                            <span class="text-primary">Redefined</span>
+                        </h1>
+                        <p class="hero-subtitle">
+                            Connect verified drivers with professionals across Ontario. 
+                            Secure, reliable, and built for business-grade transportation needs.
+                        </p>
+                        
+                        {# Smart button logic based on user authentication and type #}
+                        <div class="hero-actions">
+                            {% if user.is_authenticated %}
+                                {# User is logged in - show smart buttons based on account type #}
+                                
+                                {# Find a Ride Button Logic #}
+                                {% if user.is_traveller %}
+                                    <a href="{% url 'rides:home_search' %}" class="btn btn-primary btn-lg me-3 mb-3">
+                                        <i class="bi bi-search me-2"></i>Find Professional Rides
+                                    </a>
+                                {% elif user.is_driver %}
+                                    <a href="{% url 'rides:home_search' %}" class="btn btn-primary btn-lg me-3 mb-3">
+                                        <i class="bi bi-search me-2"></i>Book as Passenger
+                                    </a>
+                                {% endif %}
+                                
+                                {# Offer a Ride Button Logic #}
+                                {% if user.is_driver %}
+                                    <a href="{% url 'rides:route_map' %}" class="btn btn-outline-primary btn-lg me-3 mb-3">
+                                        <i class="bi bi-plus-circle me-2"></i>Create Route
+                                    </a>
+                                {% elif user.is_traveller %}
+                                    <button type="button" class="btn btn-outline-primary btn-lg me-3 mb-3" data-bs-toggle="modal" data-bs-target="#becomeDriverModal">
+                                        <i class="bi bi-car-front me-2"></i>Become a Driver
+                                    </button>
+                                {% endif %}
+                                
+                                {# Dashboard Access #}
+                                <a href="{% if user.is_driver %}{% url 'accounts:driver_dashboard' %}{% else %}{% url 'accounts:traveller_dashboard' %}{% endif %}" class="btn btn-success btn-lg mb-3">
+                                    <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                                </a>
+                                
+                            {% else %}
+                                {# User is not logged in - show registration buttons #}
+                                <a href="{% url 'accounts:traveller_registration' %}" class="btn btn-primary btn-lg me-3 mb-3">
+                                    <i class="bi bi-search me-2"></i>Find Rides
+                                </a>
+                                <a href="{% url 'accounts:driver_registration_step1' %}" class="btn btn-outline-primary btn-lg me-3 mb-3">
+                                    <i class="bi bi-car-front me-2"></i>Drive & Earn
+                                </a>
+                            {% endif %}
+                        </div>
+                        
+                        {# Welcome message for authenticated users #}
+                        {% if user.is_authenticated %}
+                            <div class="welcome-message">
+                                <small class="text-muted">
+                                    <i class="bi bi-person-check me-1"></i>
+                                    Welcome back, {{ user.full_legal_name }}
+                                    {% if user.is_driver %}
+                                        <span class="badge bg-success ms-2">Verified Driver</span>
+                                    {% else %}
+                                        <span class="badge bg-primary ms-2">Professional Member</span>
+                                    {% endif %}
+                                </small>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-visual">
+                        <div class="stats-card floating-card">
+                            <div class="row g-0">
+                                <div class="col-4 text-center border-end">
+                                    <div class="stat-item">
+                                        <div class="stat-number">10K+</div>
+                                        <div class="stat-label">Active Users</div>
+                                    </div>
+                                </div>
+                                <div class="col-4 text-center border-end">
+                                    <div class="stat-item">
+                                        <div class="stat-number">98%</div>
+                                        <div class="stat-label">Success Rate</div>
+                                    </div>
+                                </div>
+                                <div class="col-4 text-center">
+                                    <div class="stat-item">
+                                        <div class="stat-number">5★</div>
+                                        <div class="stat-label">Avg Rating</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="platform-preview">
+                            <div class="mobile-frame">
+                                <div class="screen-content">
+                                    <div class="app-header">
+                                        <div class="app-title">pointRide</div>
+                                        <div class="location-indicator">
+                                            <i class="bi bi-geo-alt-fill text-primary"></i>
+                                            <span>Toronto, ON</span>
+                                        </div>
+                                    </div>
+                                    <div class="route-card">
+                                        <div class="route-info">
+                                            <div class="route-points">
+                                                <div class="point origin">Toronto</div>
+                                                <div class="route-line"></div>
+                                                <div class="point destination">Ottawa</div>
+                                            </div>
+                                            <div class="route-details">
+                                                <span class="price">$45</span>
+                                                <span class="time">3h 45m</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <section class="features py-5 bg-light">
+    <!-- Trust Indicators -->
+    <section class="trust-section">
         <div class="container">
-            <h2 class="text-center mb-5 display-5 fw-bold">Why Choose pointRide?</h2>
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-                <div class="col">
-                    <div class="card h-100 shadow-sm text-center">
-                        <div class="card-body">
-                            <h3 class="card-title h5 text-primary fw-bold">Seamless Booking</h3>
-                            <p class="card-text text-muted">Easily find and book rides with our intuitive interface.</p>
+            <div class="trust-indicators">
+                <div class="row align-items-center">
+                    <div class="col-lg-3 col-md-6 text-center mb-4">
+                        <div class="trust-item">
+                            <i class="bi bi-shield-fill-check text-success"></i>
+                            <span>Verified Drivers</span>
                         </div>
                     </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100 shadow-sm text-center">
-                        <div class="card-body">
-                            <h3 class="card-title h5 text-primary fw-bold">Verified Drivers</h3>
-                            <p class="card-text text-muted">All our drivers undergo a multi-step verification process for your safety and peace of mind.</p>
+                    <div class="col-lg-3 col-md-6 text-center mb-4">
+                        <div class="trust-item">
+                            <i class="bi bi-clock-fill text-primary"></i>
+                            <span>24/7 Support</span>
                         </div>
                     </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100 shadow-sm text-center">
-                        <div class="card-body">
-                            <h3 class="card-title h5 text-primary fw-bold">Transparent Pricing</h3>
-                            <p class="card-text text-muted">No surprises, see the estimated fare upfront.</p>
+                    <div class="col-lg-3 col-md-6 text-center mb-4">
+                        <div class="trust-item">
+                            <i class="bi bi-geo-alt-fill text-info"></i>
+                            <span>Live Tracking</span>
                         </div>
                     </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100 shadow-sm text-center">
-                        <div class="card-body">
-                            <h3 class="card-title h5 text-primary fw-bold">Flexible Scheduling</h3>
-                            <p class="card-text text-muted">Drivers can set their availability, and travellers can find rides that fit their schedule.</p>
+                    <div class="col-lg-3 col-md-6 text-center mb-4">
+                        <div class="trust-item">
+                            <i class="bi bi-credit-card-fill text-warning"></i>
+                            <span>Secure Payments</span>
                         </div>
                     </div>
                 </div>
@@ -55,12 +175,249 @@
         </div>
     </section>
 
-    <section class="about-us py-5 bg-info bg-opacity-10">
+    <!-- Features Section -->
+    <section class="features-section">
         <div class="container">
-            <h2 class="text-center mb-4 display-5 fw-bold">About pointRide</h2>
-            <p class="lead text-center text-muted mx-auto" style="max-width: 800px;">
-                pointRide is a ride-sharing platform dedicated to providing safe, reliable, and affordable transportation services primarily within Ontario, Canada. We aim to connect drivers with travellers efficiently, ensuring a smooth journey for everyone.
-            </p>
+            <div class="section-header text-center">
+                <h2 class="section-title">Enterprise-Grade Features</h2>
+                <p class="section-subtitle">
+                    Built for professionals who demand reliability, security, and efficiency
+                </p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="row g-4">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="bi bi-person-check-fill"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h5 class="feature-title">Verified Professional Network</h5>
+                                <p class="feature-description">
+                                    Multi-step verification process ensures every driver meets our professional standards
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4 col-md-6">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="bi bi-calendar-check-fill"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h5 class="feature-title">Smart Scheduling</h5>
+                                <p class="feature-description">
+                                    Advanced booking system with real-time availability and intelligent route optimization
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4 col-md-6">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="bi bi-graph-up-arrow"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h5 class="feature-title">Dynamic Pricing</h5>
+                                <p class="feature-description">
+                                    Transparent, competitive pricing with no hidden fees or surge charges
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4 col-md-6">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="bi bi-shield-lock-fill"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h5 class="feature-title">Enterprise Security</h5>
+                                <p class="feature-description">
+                                    Bank-grade encryption and comprehensive insurance coverage for peace of mind
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4 col-md-6">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h5 class="feature-title">Real-Time Tracking</h5>
+                                <p class="feature-description">
+                                    Live GPS tracking with ETA updates and route optimization for maximum efficiency
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4 col-md-6">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="bi bi-headset"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h5 class="feature-title">24/7 Support</h5>
+                                <p class="feature-description">
+                                    Dedicated support team available around the clock for immediate assistance
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
+
+    <!-- How It Works Section -->
+    <section class="process-section">
+        <div class="container">
+            <div class="section-header text-center">
+                <h2 class="section-title">How pointRide Works</h2>
+                <p class="section-subtitle">
+                    Simple, efficient, and designed for busy professionals
+                </p>
+            </div>
+            
+            <div class="process-steps">
+                <div class="row g-4">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="step-card">
+                            <div class="step-number">01</div>
+                            <div class="step-content">
+                                <h5 class="step-title">Create Account</h5>
+                                <p class="step-description">
+                                    Quick registration with professional verification
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-6">
+                        <div class="step-card">
+                            <div class="step-number">02</div>
+                            <div class="step-content">
+                                <h5 class="step-title">Book or Offer</h5>
+                                <p class="step-description">
+                                    Search for rides or create your own route
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-6">
+                        <div class="step-card">
+                            <div class="step-number">03</div>
+                            <div class="step-content">
+                                <h5 class="step-title">Connect</h5>
+                                <p class="step-description">
+                                    Match with verified professionals instantly
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-6">
+                        <div class="step-card">
+                            <div class="step-number">04</div>
+                            <div class="step-content">
+                                <h5 class="step-title">Travel</h5>
+                                <p class="step-description">
+                                    Enjoy safe, comfortable transportation
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content text-center">
+                <h2 class="cta-title">Ready to Transform Your Commute?</h2>
+                <p class="cta-subtitle">
+                    Join thousands of professionals who trust pointRide for their transportation needs
+                </p>
+                <div class="cta-actions">
+                    {% if not user.is_authenticated %}
+                        <a href="{% url 'accounts:traveller_registration' %}" class="btn btn-primary btn-lg me-3 mb-3">
+                            Start Your Journey
+                        </a>
+                        <a href="{% url 'accounts:driver_registration_step1' %}" class="btn btn-outline-primary btn-lg mb-3">
+                            Become a Driver
+                        </a>
+                    {% else %}
+                        <a href="{% if user.is_driver %}{% url 'accounts:driver_dashboard' %}{% else %}{% url 'accounts:traveller_dashboard' %}{% endif %}" class="btn btn-primary btn-lg">
+                            Go to Dashboard
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# Modal for Travellers who want to become Drivers #}
+    {% if user.is_authenticated and user.is_traveller %}
+    <div class="modal fade" id="becomeDriverModal" tabindex="-1" aria-labelledby="becomeDriverModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold" id="becomeDriverModalLabel">
+                        <i class="bi bi-car-front me-2 text-primary"></i>
+                        Become a pointRide Professional Driver
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold mb-3">Driver Requirements</h6>
+                            <ul class="requirements-list">
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Valid Ontario driver's license</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Vehicle registration & insurance</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Clean driving record</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Professional background verification</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold mb-3">Driver Benefits</h6>
+                            <ul class="benefits-list">
+                                <li><i class="bi bi-currency-dollar text-success me-2"></i>Competitive earnings</li>
+                                <li><i class="bi bi-clock text-success me-2"></i>Flexible schedule</li>
+                                <li><i class="bi bi-people text-success me-2"></i>Professional network</li>
+                                <li><i class="bi bi-shield-check text-success me-2"></i>Insurance coverage</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="alert alert-info mt-4">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-info-circle me-3"></i>
+                            <div>
+                                <strong>Current Status:</strong> Professional Member<br>
+                                <small class="text-muted">Upgrade to Driver to start earning with your commute</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        Maybe Later
+                    </button>
+                    <a href="{% url 'accounts:driver_registration_step1' %}" class="btn btn-primary">
+                        <i class="bi bi-arrow-right me-2"></i>Start Driver Application
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 {% endblock %}

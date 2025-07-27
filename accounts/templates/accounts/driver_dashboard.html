@@ -1,93 +1,762 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Driver Dashboard{% endblock %}
+{% block title %}Driver Dashboard - pointRide{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="text-center mb-5">
-        <h1 class="fw-bold">Welcome, {{ request.user.full_legal_name }} 🚗</h1>
-        <p class="text-muted">Manage your rides and routes with our enhanced planning tools</p>
-    </div>
-
-    <div class="row g-4">
-        <!-- Enhanced Route Planning Card -->
-        <div class="col-md-6">
-            <div class="card shadow border-primary h-100">
-                <div class="card-body">
-                    <h5 class="card-title text-primary">🗺️ Enhanced Route Planning</h5>
-                    <p class="card-text">Plan routes using our interactive Ontario map with all cities. Create routes visually and manage them efficiently.</p>
-                    <div class="d-grid gap-2">
-                        <a href="{% url 'rides:route_map' %}" class="btn btn-primary">🗺️ Open Map Interface</a>
-                        <small class="text-muted">✨ New: Interactive city selection with visual map</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Create Ride Card -->
-        <div class="col-md-6">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body">
-                    <h5 class="card-title">📝 Create New Ride</h5>
-                    <p class="card-text">Post a ride offer using our quick form interface.</p>
-                    <div class="d-grid gap-2">
-                        <a href="{% url 'rides:create_ride' %}" class="btn btn-success">Create Ride (Form)</a>
-                        <small class="text-muted">Traditional form-based ride creation</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- My Rides Card -->
-        <div class="col-md-6">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body">
-                    <h5 class="card-title">🚗 My Rides & Bookings</h5>
-                    <p class="card-text">View your posted rides and manage booking requests from passengers.</p>
-                    <a href="{% url 'rides:my_rides' %}" class="btn btn-info">Manage My Rides</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Browse Rides Card -->
-        <div class="col-md-6">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body">
-                    <h5 class="card-title">🔍 Browse Available Rides</h5>
-                    <p class="card-text">See what other drivers are offering across Ontario.</p>
-                    <a href="{% url 'rides:home_search' %}" class="btn btn-outline-primary">Browse Rides</a>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Quick Stats Card -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card bg-light">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-md-8">
-                            <h5 class="card-title mb-0">Account Status</h5>
-                            <p class="card-text mb-0">
-                                <strong>Verification Status:</strong> 
+<div class="driver-dashboard">
+    <!-- Dashboard Header Section -->
+    <section class="dashboard-header">
+        <div class="container-fluid">
+            <div class="dashboard-hero">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <div class="welcome-section">
+                            <div class="status-indicator">
                                 {% if user.driver_profile.account_status == 'VERIFIED' %}
-                                    <span class="badge bg-success">✅ Verified Driver</span>
+                                    <span class="status-badge verified">
+                                        <i class="bi bi-shield-check-fill me-2"></i>
+                                        Verified Professional Driver
+                                    </span>
                                 {% elif user.driver_profile.account_status == 'PENDING' %}
-                                    <span class="badge bg-warning">⏳ Pending Verification</span>
+                                    <span class="status-badge pending">
+                                        <i class="bi bi-clock-fill me-2"></i>
+                                        Verification Pending
+                                    </span>
                                 {% else %}
-                                    <span class="badge bg-danger">{{ user.driver_profile.account_status }}</span>
+                                    <span class="status-badge rejected">
+                                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                        {{ user.driver_profile.account_status }}
+                                    </span>
                                 {% endif %}
+                            </div>
+                            <h1 class="welcome-title">
+                                Welcome back, <span class="user-name">{{ request.user.full_legal_name }}</span>
+                            </h1>
+                            <p class="welcome-subtitle">
+                                Ready to create your next ride or manage your existing routes? Your professional dashboard awaits.
                             </p>
                         </div>
-                        <div class="col-md-4 text-end">
-                            <small class="text-muted">Ready to start earning with pointRide</small>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="dashboard-stats">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="bi bi-car-front-fill"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number">Active</div>
+                                    <div class="stat-label">Driver Status</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
+
+    <!-- Main Dashboard Content -->
+    <section class="dashboard-content">
+        <div class="container-fluid">
+            <!-- Primary Actions Row -->
+            <div class="row g-4 mb-5">
+                <!-- Enhanced Route Planning Card - Primary Action -->
+                <div class="col-lg-6">
+                    <div class="action-card primary-card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="bi bi-map-fill"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">Enhanced Route Planning</h3>
+                                <span class="card-badge featured">Most Popular</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-description">
+                                Plan routes using our interactive Ontario map with all cities. Create routes visually and manage them efficiently with our advanced planning tools.
+                            </p>
+                            <div class="card-features">
+                                <div class="feature-item">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span>Interactive city selection</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span>Visual map interface</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span>Route optimization</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{% url 'rides:route_map' %}" class="btn btn-primary btn-lg w-100">
+                                <i class="bi bi-map me-2"></i>
+                                Open Map Interface
+                            </a>
+                            <small class="enhancement-note">
+                                <i class="bi bi-stars me-1"></i>
+                                Enhanced with interactive city selection
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Create Ride Card - Secondary Action -->
+                <div class="col-lg-6">
+                    <div class="action-card secondary-card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="bi bi-plus-circle-fill"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">Create New Ride</h3>
+                                <span class="card-badge traditional">Traditional Form</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-description">
+                                Post a ride offer using our streamlined form interface. Perfect for quick ride creation when you know your exact route details.
+                            </p>
+                            <div class="card-features">
+                                <div class="feature-item">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span>Quick form interface</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span>Instant ride posting</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{% url 'rides:create_ride' %}" class="btn btn-success btn-lg w-100">
+                                <i class="bi bi-plus-circle me-2"></i>
+                                Create Ride (Form)
+                            </a>
+                            <small class="enhancement-note">
+                                <i class="bi bi-lightning-fill me-1"></i>
+                                Fast form-based creation
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Secondary Actions Row -->
+            <div class="row g-4 mb-5">
+                <!-- My Rides & Bookings -->
+                <div class="col-lg-6">
+                    <div class="action-card management-card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="bi bi-car-front-fill"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">My Rides & Bookings</h3>
+                                <span class="card-badge management">Management</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-description">
+                                View your posted rides and manage booking requests from passengers. Handle confirmations, cancellations, and ride updates.
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{% url 'rides:my_rides' %}" class="btn btn-info btn-lg w-100">
+                                <i class="bi bi-car-front me-2"></i>
+                                Manage My Rides
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Browse Available Rides -->
+                <div class="col-lg-6">
+                    <div class="action-card browse-card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="bi bi-search"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">Browse Available Rides</h3>
+                                <span class="card-badge discovery">Discovery</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-description">
+                                Explore what other drivers are offering across Ontario. Find inspiration for routes and competitive pricing insights.
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{% url 'rides:home_search' %}" class="btn btn-outline-primary btn-lg w-100">
+                                <i class="bi bi-search me-2"></i>
+                                Browse Rides
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Status Section -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="status-section">
+                        <div class="status-card">
+                            <div class="status-header">
+                                <div class="status-icon">
+                                    {% if user.driver_profile.account_status == 'VERIFIED' %}
+                                        <i class="bi bi-shield-check-fill text-success"></i>
+                                    {% elif user.driver_profile.account_status == 'PENDING' %}
+                                        <i class="bi bi-clock-fill text-warning"></i>
+                                    {% else %}
+                                        <i class="bi bi-exclamation-triangle-fill text-danger"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="status-content">
+                                    <h4 class="status-title">Account Verification Status</h4>
+                                    <p class="status-description">
+                                        {% if user.driver_profile.account_status == 'VERIFIED' %}
+                                            Your driver account is fully verified and ready for professional ride sharing.
+                                        {% elif user.driver_profile.account_status == 'PENDING' %}
+                                            Your verification is being processed. You'll receive an update within 24-48 hours.
+                                        {% else %}
+                                            Please contact support to resolve your account verification status.
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <div class="status-badge-large">
+                                    {% if user.driver_profile.account_status == 'VERIFIED' %}
+                                        <span class="badge-verified">
+                                            <i class="bi bi-check-circle-fill me-2"></i>
+                                            Verified Driver
+                                        </span>
+                                    {% elif user.driver_profile.account_status == 'PENDING' %}
+                                        <span class="badge-pending">
+                                            <i class="bi bi-clock-fill me-2"></i>
+                                            Pending Verification
+                                        </span>
+                                    {% else %}
+                                        <span class="badge-rejected">
+                                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                            {{ user.driver_profile.account_status }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            {% if user.driver_profile.account_status == 'VERIFIED' %}
+                                <div class="status-footer success-footer">
+                                    <div class="success-message">
+                                        <i class="bi bi-trophy-fill me-2"></i>
+                                        <span>Ready to start earning with pointRide's professional network</span>
+                                    </div>
+                                </div>
+                            {% elif user.driver_profile.account_status == 'PENDING' %}
+                                <div class="status-footer pending-footer">
+                                    <div class="pending-message">
+                                        <i class="bi bi-info-circle-fill me-2"></i>
+                                        <span>We're reviewing your documents and will notify you once verification is complete</span>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
+
+<style>
+/* =============================================
+   DRIVER DASHBOARD STYLES
+   ============================================= */
+
+.driver-dashboard {
+    min-height: calc(100vh - 160px);
+    background: var(--gray-50);
+}
+
+/* Dashboard Header */
+.dashboard-header {
+    background: linear-gradient(135deg, var(--white) 0%, var(--gray-50) 100%);
+    padding: 40px 0;
+    border-bottom: 1px solid var(--gray-200);
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30%;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="dashboard-grid" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M 50 0 L 0 0 0 50" fill="none" stroke="%23e2e8f0" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23dashboard-grid)"/></svg>');
+    opacity: 0.4;
+    z-index: 0;
+}
+
+.dashboard-hero {
+    position: relative;
+    z-index: 1;
+}
+
+.status-indicator {
+    margin-bottom: 16px;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.verified {
+    background: rgba(5, 150, 105, 0.1);
+    color: var(--success-color);
+    border: 1px solid rgba(5, 150, 105, 0.2);
+}
+
+.status-badge.pending {
+    background: rgba(217, 119, 6, 0.1);
+    color: var(--warning-color);
+    border: 1px solid rgba(217, 119, 6, 0.2);
+}
+
+.status-badge.rejected {
+    background: rgba(220, 38, 38, 0.1);
+    color: var(--danger-color);
+    border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+.welcome-title {
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 800;
+    color: var(--gray-900);
+    margin-bottom: 12px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+}
+
+.user-name {
+    color: var(--primary-color);
+}
+
+.welcome-subtitle {
+    font-size: 1.125rem;
+    color: var(--gray-600);
+    line-height: 1.6;
+    max-width: 600px;
+}
+
+/* Dashboard Stats */
+.dashboard-stats {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.stat-card {
+    background: var(--white);
+    padding: 24px;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--gray-200);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 200px;
+}
+
+.stat-icon {
+    width: 56px;
+    height: 56px;
+    background: var(--primary-color);
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-icon i {
+    font-size: 1.5rem;
+    color: var(--white);
+}
+
+.stat-number {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: var(--gray-600);
+    margin-top: 4px;
+}
+
+/* Dashboard Content */
+.dashboard-content {
+    padding: 40px 0;
+}
+
+/* Action Cards */
+.action-card {
+    background: var(--white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-200);
+    transition: var(--transition-normal);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+.action-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    transition: var(--transition-normal);
+}
+
+.primary-card::before {
+    background: var(--primary-color);
+}
+
+.secondary-card::before {
+    background: var(--success-color);
+}
+
+.management-card::before {
+    background: var(--info-color);
+}
+
+.browse-card::before {
+    background: var(--secondary-color);
+}
+
+.action-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.card-header {
+    padding: 24px 24px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.card-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.primary-card .card-icon {
+    background: var(--primary-color);
+}
+
+.secondary-card .card-icon {
+    background: var(--success-color);
+}
+
+.management-card .card-icon {
+    background: var(--info-color);
+}
+
+.browse-card .card-icon {
+    background: var(--secondary-color);
+}
+
+.card-icon i {
+    font-size: 1.5rem;
+    color: var(--white);
+}
+
+.card-title-section {
+    flex: 1;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 8px;
+    line-height: 1.3;
+}
+
+.card-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.card-badge.featured {
+    background: rgba(37, 99, 235, 0.1);
+    color: var(--primary-color);
+}
+
+.card-badge.traditional {
+    background: rgba(5, 150, 105, 0.1);
+    color: var(--success-color);
+}
+
+.card-badge.management {
+    background: rgba(8, 145, 178, 0.1);
+    color: var(--info-color);
+}
+
+.card-badge.discovery {
+    background: rgba(100, 116, 139, 0.1);
+    color: var(--secondary-color);
+}
+
+.card-body {
+    padding: 0 24px;
+    flex: 1;
+}
+
+.card-description {
+    color: var(--gray-600);
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.card-features {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+    color: var(--gray-700);
+}
+
+.card-footer {
+    padding: 20px 24px 24px;
+    margin-top: auto;
+}
+
+.enhancement-note {
+    display: block;
+    margin-top: 12px;
+    color: var(--gray-500);
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+.enhancement-note i {
+    color: var(--warning-color);
+}
+
+/* Status Section */
+.status-section {
+    margin-top: 20px;
+}
+
+.status-card {
+    background: var(--white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-200);
+    overflow: hidden;
+}
+
+.status-header {
+    padding: 32px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.status-icon {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius);
+    background: var(--gray-50);
+}
+
+.status-icon i {
+    font-size: 2rem;
+}
+
+.status-content {
+    flex: 1;
+}
+
+.status-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 8px;
+}
+
+.status-description {
+    color: var(--gray-600);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.status-badge-large {
+    flex-shrink: 0;
+}
+
+.badge-verified,
+.badge-pending,
+.badge-rejected {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 20px;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+}
+
+.badge-verified {
+    background: rgba(5, 150, 105, 0.1);
+    color: var(--success-color);
+    border: 2px solid var(--success-color);
+}
+
+.badge-pending {
+    background: rgba(217, 119, 6, 0.1);
+    color: var(--warning-color);
+    border: 2px solid var(--warning-color);
+}
+
+.badge-rejected {
+    background: rgba(220, 38, 38, 0.1);
+    color: var(--danger-color);
+    border: 2px solid var(--danger-color);
+}
+
+.status-footer {
+    padding: 20px 32px;
+    border-top: 1px solid var(--gray-200);
+}
+
+.success-footer {
+    background: rgba(5, 150, 105, 0.03);
+    border-top-color: var(--success-color);
+}
+
+.pending-footer {
+    background: rgba(217, 119, 6, 0.03);
+    border-top-color: var(--warning-color);
+}
+
+.success-message,
+.pending-message {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+}
+
+.success-message {
+    color: var(--success-color);
+}
+
+.pending-message {
+    color: var(--warning-color);
+}
+
+/* Responsive Design */
+@media (max-width: 991px) {
+    .dashboard-header {
+        padding: 30px 0;
+    }
+    
+    .dashboard-content {
+        padding: 30px 0;
+    }
+    
+    .welcome-title {
+        font-size: 2rem;
+    }
+    
+    .dashboard-stats {
+        justify-content: center;
+        margin-top: 24px;
+    }
+    
+    .status-header {
+        padding: 24px;
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+    }
+    
+    .status-footer {
+        padding: 16px 24px;
+    }
+}
+
+@media (max-width: 767px) {
+    .dashboard-header {
+        padding: 20px 0;
+    }
+    
+    .dashboard-content {
+        padding: 20px 0;
+    }
+    
+    .card-header {
+        padding: 20px 20px 12px;
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+    }
+    
+    .card-body {
+        padding: 0 20px;
+        text-align: center;
+    }
+    
+    .card-footer {
+        padding: 16px 20px 20px;
+    }
+    
+    .stat-card {
+        flex-direction: column;
+        text-align: center;
+        min-width: auto;
+        gap: 12px;
+    }
+    
+    .feature-item {
+        justify-content: center;
+    }
+}
+</style>
 {% endblock %}

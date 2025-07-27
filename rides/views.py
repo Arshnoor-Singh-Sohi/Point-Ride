@@ -5,12 +5,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponseForbidden, JsonResponse
 from django.core.paginator import Paginator
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Sum
 from django.utils import timezone
 from datetime import date, timedelta
 from .models import Ride, Booking, City, Route, RideReview
-
-# Basic version - no complex forms needed
 
 def home_search(request):
     """
@@ -73,7 +71,7 @@ def search_rides(request):
 @login_required
 def create_ride(request):
     """
-    Create a new ride (drivers only) - WORKING VERSION
+    Create a new ride (drivers only) - ENHANCED VERSION
     """
     if not request.user.is_driver:
         return HttpResponseForbidden("Only drivers can create rides")
@@ -129,7 +127,7 @@ def create_ride(request):
                 notes=notes
             )
             
-            messages.success(request, 'Ride created successfully!')
+            messages.success(request, f'Ride created successfully! {pickup_city.name} → {dropoff_city.name} on {departure_date}')
             return redirect('rides:ride_detail', ride_id=ride.id)
             
         except (ValueError, City.DoesNotExist) as e:
@@ -139,7 +137,7 @@ def create_ride(request):
 
 def ride_detail(request, ride_id):
     """
-    Display ride details and booking form - WORKING VERSION
+    Display ride details and booking form - ENHANCED VERSION
     """
     ride = get_object_or_404(Ride, id=ride_id)
     
@@ -178,7 +176,7 @@ def ride_detail(request, ride_id):
                     total_price=seats_booked * ride.price_per_seat,
                     booking_notes=booking_notes
                 )
-                messages.success(request, 'Booking request sent successfully!')
+                messages.success(request, 'Booking request sent successfully! The driver will review your request.')
                 return redirect('rides:booking_detail', booking_id=booking.id)
                 
         except ValueError:
@@ -193,11 +191,10 @@ def ride_detail(request, ride_id):
     
     return render(request, 'rides/ride_detail.html', context)
 
-
 @login_required
 def booking_detail(request, booking_id):
     """
-    Display booking details - FIXED VERSION with confirmation
+    Display booking details - ENHANCED VERSION with better seat tracking
     """
     booking = get_object_or_404(Booking, id=booking_id)
     
@@ -210,20 +207,21 @@ def booking_detail(request, booking_id):
         action = request.POST.get('action')
         
         if action == 'confirm' and request.user == booking.ride.driver and booking.status == 'PENDING':
-            # Check if there are enough seats available
-            if booking.seats_booked <= booking.ride.available_seats_count:
+            # Check if there are enough seats available (using fixed calculation)
+            current_available = booking.ride.available_seats_count
+            if booking.seats_booked <= current_available:
                 booking.status = 'CONFIRMED'
                 booking.confirmed_at = timezone.now()
                 booking.save()
                 
-                # Update ride status if it becomes full
+                # Check if ride is now full (using fixed calculation)
                 if booking.ride.available_seats_count <= 0:
                     booking.ride.status = 'FULL'
                     booking.ride.save()
                 
-                messages.success(request, f'Booking confirmed for {booking.traveller.full_legal_name}!')
+                messages.success(request, f'Booking confirmed for {booking.traveller.full_legal_name}! {booking.seats_booked} seat(s) booked.')
             else:
-                messages.error(request, 'Not enough seats available!')
+                messages.error(request, f'Not enough seats available! Only {current_available} seats left.')
                 
         elif action == 'reject' and request.user == booking.ride.driver and booking.status == 'PENDING':
             booking.status = 'CANCELLED'
@@ -242,17 +240,19 @@ def booking_detail(request, booking_id):
 @login_required
 def my_rides(request):
     """
-    Display user's rides - SIMPLE VERSION
+    Display user's rides - ENHANCED VERSION
     """
     if request.user.is_driver:
-        # Get driver's rides
-        rides = Ride.objects.filter(driver=request.user).order_by('-departure_date')
+        # Get driver's rides with proper seat calculations
+        rides = Ride.objects.filter(driver=request.user).select_related(
+            'pickup_city', 'dropoff_city'
+        ).prefetch_related('bookings').order_by('-departure_date')
         
         # Get pending bookings for driver's rides
         pending_bookings = Booking.objects.filter(
             ride__driver=request.user,
             status='PENDING'
-        ).order_by('-created_at')
+        ).select_related('ride', 'traveller', 'ride__pickup_city', 'ride__dropoff_city').order_by('-created_at')
         
         return render(request, 'rides/my_rides_driver.html', {
             'rides': rides,
@@ -260,59 +260,30 @@ def my_rides(request):
         })
     else:
         # Traveller bookings
-        bookings = Booking.objects.filter(traveller=request.user).order_by('-created_at')
+        bookings = Booking.objects.filter(traveller=request.user).select_related(
+            'ride', 'ride__pickup_city', 'ride__dropoff_city', 'ride__driver'
+        ).order_by('-created_at')
+        
         return render(request, 'rides/my_rides_traveller.html', {'bookings': bookings})
 
 @login_required  
 def route_map(request):
     """
-    Enhanced visual route selection interface with creation functionality
+    Enhanced visual route selection interface - SIMPLIFIED VERSION
     """
     if not request.user.is_driver:
-        return HttpResponseForbidden("Only drivers can create routes")
+        return HttpResponseForbidden("Only drivers can access route planning")
     
     cities = City.objects.filter(is_active=True).order_by('name')
     user_routes = Route.objects.filter(driver=request.user).select_related('origin_city', 'destination_city')
     
-    # Handle route creation from map
-    if request.method == 'POST':
-        origin_city_id = request.POST.get('origin_city')
-        destination_city_id = request.POST.get('destination_city')
-        driver_price = request.POST.get('driver_price')
-        
-        if origin_city_id and destination_city_id and driver_price:
-            try:
-                origin_city = City.objects.get(id=origin_city_id)
-                destination_city = City.objects.get(id=destination_city_id)
-                
-                if origin_city_id == destination_city_id:
-                    messages.error(request, "Origin and destination cities must be different")
-                else:
-                    # Create or update route
-                    route, created = Route.objects.get_or_create(
-                        driver=request.user,
-                        origin_city=origin_city,
-                        destination_city=destination_city,
-                        defaults={'driver_price': float(driver_price)}
-                    )
-                    
-                    if created:
-                        messages.success(request, f'Route created: {origin_city.name} → {destination_city.name}')
-                    else:
-                        route.driver_price = float(driver_price)
-                        route.save()
-                        messages.success(request, f'Route updated: {origin_city.name} → {destination_city.name}')
-                    
-                    return redirect('rides:route_map')
-                    
-            except (ValueError, City.DoesNotExist) as e:
-                messages.error(request, f"Error creating route: {str(e)}")
-        else:
-            messages.error(request, "Please fill in all required fields")
+    # Note: Route creation is now handled directly in create_ride view
+    # This view focuses on visualization and planning
     
     return render(request, 'rides/route_map.html', {
         'cities': cities,
-        'user_routes': user_routes
+        'user_routes': user_routes,
+        'today': date.today(),
     })
 
 @login_required
@@ -342,11 +313,26 @@ def api_cities(request):
 @login_required
 def api_validate_location(request):
     """
-    API endpoint for location validation - SIMPLE VERSION
+    API endpoint for location validation - ENHANCED VERSION
     """
     location = request.GET.get('location', '')
+    
+    # Basic Ontario validation
+    ontario_keywords = ['ontario', 'on', 'canada', 'ca']
+    is_ontario = any(keyword in location.lower() for keyword in ontario_keywords)
+    
+    # Find nearest city
+    nearest_city = None
+    if location:
+        city_match = City.objects.filter(
+            name__icontains=location.split(',')[0].strip(),
+            is_active=True
+        ).first()
+        if city_match:
+            nearest_city = city_match.name
+    
     return JsonResponse({
-        'is_valid': True,
-        'nearest_city': 'Toronto',
-        'error': None
+        'is_valid': is_ontario,
+        'nearest_city': nearest_city,
+        'error': None if is_ontario else 'Location must be in Ontario, Canada'
     })

@@ -1,4 +1,4 @@
-{# templates/base.html #}
+{# templates/base.html - Enterprise Professional Header #}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,7 +10,7 @@
     {# Bootstrap 5 CSS CDN #}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
-    {# Bootstrap Icons - Added by Imran #}
+    {# Bootstrap Icons #}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
     {# Custom CSS #}
@@ -19,56 +19,211 @@
     {# Google Fonts - Inter #}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body style="display:flex; flex-direction:column">
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
-            <div class="container">
-                <a class="navbar-brand fw-bold text-primary" href="{% url 'home' %}">pointRide</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+<body>
+    <!-- Enterprise Professional Header -->
+    <header class="enterprise-header">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <!-- Brand Section -->
+                <div class="navbar-brand-section">
+                    <a class="navbar-brand" href="{% url 'home' %}">
+                        <div class="brand-container">
+                            <div class="brand-icon">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </div>
+                            <div class="brand-text">
+                                <span class="brand-name">pointRide</span>
+                                <span class="brand-tagline">Professional</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Mobile Toggle Button -->
+                <button class="navbar-toggler custom-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#enterpriseNav" aria-controls="enterpriseNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="toggler-icon"></span>
+                    <span class="toggler-icon"></span>
+                    <span class="toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        {% if user.is_authenticated %}
-                            {# Imran's dropdown menu implementation #}
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle fw-semibold" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Hello, {{ user.username }}
+
+                <!-- Navigation Content -->
+                <div class="collapse navbar-collapse" id="enterpriseNav">
+                    
+                    <!-- Primary Navigation (Left Side) -->
+                    {% if user.is_authenticated %}
+                    <ul class="navbar-nav primary-nav">
+                        <!-- Dashboard Link -->
+                        <li class="nav-item">
+                            <a class="nav-link dashboard-link" href="{% if user.is_driver %}{% url 'accounts:driver_dashboard' %}{% else %}{% url 'accounts:traveller_dashboard' %}{% endif %}">
+                                <i class="bi bi-speedometer2 me-2"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        
+                        <!-- Role-Specific Quick Actions -->
+                        {% if user.is_driver %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'rides:route_map' %}">
+                                    <i class="bi bi-plus-circle-fill me-2"></i>
+                                    <span>Create Ride</span>
                                 </a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'rides:my_rides' %}">
+                                    <i class="bi bi-car-front-fill me-2"></i>
+                                    <span>My Rides</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'rides:home_search' %}">
+                                    <i class="bi bi-search me-2"></i>
+                                    <span>Find Rides</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'rides:my_rides' %}">
+                                    <i class="bi bi-ticket-detailed-fill me-2"></i>
+                                    <span>My Bookings</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                    {% endif %}
+
+                    <!-- Secondary Navigation (Right Side) -->
+                    <ul class="navbar-nav secondary-nav ms-auto">
+                        {% if user.is_authenticated %}
+                            <!-- User Profile Dropdown -->
+                            <li class="nav-item dropdown user-dropdown">
+                                <a class="nav-link dropdown-toggle user-profile-toggle" href="#" id="userProfileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <div class="user-avatar">
+                                        {% if user.profile_picture %}
+                                            <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}" class="avatar-image">
+                                        {% else %}
+                                            <div class="avatar-placeholder">
+                                                <i class="bi bi-person-fill"></i>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="user-info d-none d-lg-block">
+                                        <span class="user-name">{{ user.username }}</span>
+                                        <span class="user-role">
+                                            {% if user.is_driver %}
+                                                <i class="bi bi-shield-check text-success me-1"></i>Driver
+                                            {% else %}
+                                                <i class="bi bi-person-badge text-primary me-1"></i>Member
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </a>
+                                
+                                <!-- Dropdown Menu -->
+                                <ul class="dropdown-menu dropdown-menu-end user-dropdown-menu" aria-labelledby="userProfileDropdown">
+                                    <!-- User Info Header -->
+                                    <li class="dropdown-header">
+                                        <div class="dropdown-user-info">
+                                            <div class="dropdown-user-name">{{ user.full_legal_name }}</div>
+                                            <div class="dropdown-user-email">{{ user.email }}</div>
+                                            <div class="dropdown-user-status">
+                                                {% if user.is_driver %}
+                                                    <span class="status-badge driver">
+                                                        <i class="bi bi-car-front me-1"></i>Verified Driver
+                                                    </span>
+                                                {% else %}
+                                                    <span class="status-badge member">
+                                                        <i class="bi bi-person me-1"></i>Professional Member
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </li>
+                                    
+                                    <li><hr class="dropdown-divider"></li>
+                                    
+                                    <!-- Quick Actions -->
                                     <li>
                                         <a class="dropdown-item" href="{% if user.is_driver %}{% url 'accounts:driver_dashboard' %}{% else %}{% url 'accounts:traveller_dashboard' %}{% endif %}">
-                                            <i class="bi bi-house-door me-2"></i>Home
+                                            <i class="bi bi-speedometer2 me-3"></i>
+                                            <span>Dashboard</span>
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="{% url 'accounts:edit_profile' %}">
-                                            <i class="bi bi-person me-2"></i>Profile
+                                            <i class="bi bi-person-gear me-3"></i>
+                                            <span>Profile Settings</span>
                                         </a>
                                     </li>
+                                    
+                                    {% if user.is_driver %}
+                                        <li>
+                                            <a class="dropdown-item" href="{% url 'rides:route_map' %}">
+                                                <i class="bi bi-plus-circle me-3"></i>
+                                                <span>Create New Ride</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                    
                                     <li><hr class="dropdown-divider"></li>
+                                    
+                                    <!-- Account Type Info -->
+                                    <li class="dropdown-header">
+                                        <small class="text-muted">Account Information</small>
+                                    </li>
                                     <li>
-                                        <form action="{% url 'accounts:logout' %}" method="post" class="d-inline">
+                                        <div class="dropdown-item-text">
+                                            <div class="account-info">
+                                                <div class="account-type">
+                                                    {% if user.is_driver %}
+                                                        <i class="bi bi-shield-check text-success me-2"></i>
+                                                        Professional Driver Account
+                                                    {% else %}
+                                                        <i class="bi bi-person-badge text-primary me-2"></i>
+                                                        Professional Member Account
+                                                    {% endif %}
+                                                </div>
+                                                <div class="member-since">
+                                                    <small class="text-muted">Member since {{ user.date_joined|date:"M Y" }}</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    
+                                    <li><hr class="dropdown-divider"></li>
+                                    
+                                    <!-- Logout -->
+                                    <li>
+                                        <form action="{% url 'accounts:logout' %}" method="post" class="d-inline w-100">
                                             {% csrf_token %}
-                                            <button type="submit" class="dropdown-item btn btn-link text-start w-100">
-                                                <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                            <button type="submit" class="dropdown-item logout-item">
+                                                <i class="bi bi-box-arrow-right me-3"></i>
+                                                <span>Sign Out</span>
                                             </button>
                                         </form>
                                     </li>
                                 </ul>
                             </li>
                         {% else %}
-                            {# Original auth links - unchanged #}
+                            <!-- Authentication Links for Non-Logged In Users -->
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'accounts:driver_registration_step1' %}">Become a Driver</a>
+                                <a class="nav-link auth-link" href="{% url 'accounts:driver_registration_step1' %}">
+                                    <i class="bi bi-car-front me-2"></i>
+                                    <span>Become a Driver</span>
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'accounts:traveller_register' %}">Register as Traveller</a>
+                                <a class="nav-link auth-link" href="{% url 'accounts:traveller_register' %}">
+                                    <i class="bi bi-person-plus me-2"></i>
+                                    <span>Sign Up</span>
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="btn btn-primary text-white ms-lg-3" href="{% url 'accounts:login' %}">Login</a>
+                                <a class="btn btn-primary login-btn" href="{% url 'accounts:login' %}">
+                                    <i class="bi bi-box-arrow-in-right me-2"></i>
+                                    <span>Sign In</span>
+                                </a>
                             </li>
                         {% endif %}
                     </ul>
@@ -77,19 +232,191 @@
         </nav>
     </header>
 
-    <main class="flex-grow-1">
+    <!-- Main Content Area -->
+    <main class="main-content">
+        {# Display messages with enhanced styling #}
+        {% if messages %}
+            <div class="messages-container">
+                <div class="container-fluid">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show enterprise-alert" role="alert">
+                            <div class="alert-content">
+                                {% if message.tags == 'success' %}
+                                    <i class="bi bi-check-circle-fill me-2"></i>
+                                {% elif message.tags == 'error' %}
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                {% elif message.tags == 'warning' %}
+                                    <i class="bi bi-exclamation-circle-fill me-2"></i>
+                                {% else %}
+                                    <i class="bi bi-info-circle-fill me-2"></i>
+                                {% endif %}
+                                <span>{{ message }}</span>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+        
         {% block content %}
         {% endblock %}
     </main>
 
-    <footer class="bg-dark text-white text-center py-4 mt-auto">
-        <div class="container">
-            <p class="mb-0">&copy; {% now "Y" %} pointRide. All rights reserved.</p>
+    <!-- Enterprise Footer -->
+    <footer class="enterprise-footer">
+        <div class="container-fluid">
+            <!-- Main Footer Content -->
+            <div class="footer-main">
+                <div class="row g-4">
+                    <!-- Company Section -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="footer-section">
+                            <div class="footer-brand-section">
+                                <div class="footer-brand-container">
+                                    <div class="footer-brand-icon">
+                                        <i class="bi bi-geo-alt-fill"></i>
+                                    </div>
+                                    <div class="footer-brand-text">
+                                        <span class="footer-brand-name">pointRide</span>
+                                        <span class="footer-brand-tagline">Professional Transportation</span>
+                                    </div>
+                                </div>
+                                <p class="footer-description">
+                                    Connecting verified professionals across Ontario with safe, reliable, and efficient transportation solutions.
+                                </p>
+                                <div class="footer-stats">
+                                    <div class="footer-stat">
+                                        <span class="stat-number">10K+</span>
+                                        <span class="stat-label">Active Users</span>
+                                    </div>
+                                    <div class="footer-stat">
+                                        <span class="stat-number">98%</span>
+                                        <span class="stat-label">Success Rate</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div class="col-lg-2 col-md-6">
+                        <div class="footer-section">
+                            <h6 class="footer-title">Platform</h6>
+                            <ul class="footer-links">
+                                {% if user.is_authenticated %}
+                                    <li><a href="{% if user.is_driver %}{% url 'accounts:driver_dashboard' %}{% else %}{% url 'accounts:traveller_dashboard' %}{% endif %}">Dashboard</a></li>
+                                    {% if user.is_driver %}
+                                        <li><a href="{% url 'rides:route_map' %}">Create Ride</a></li>
+                                        <li><a href="{% url 'rides:my_rides' %}">My Rides</a></li>
+                                    {% else %}
+                                        <li><a href="{% url 'rides:home_search' %}">Find Rides</a></li>
+                                        <li><a href="{% url 'rides:my_rides' %}">My Bookings</a></li>
+                                    {% endif %}
+                                    <li><a href="{% url 'accounts:edit_profile' %}">Profile Settings</a></li>
+                                {% else %}
+                                    <li><a href="{% url 'accounts:traveller_registration' %}">Sign Up</a></li>
+                                    <li><a href="{% url 'accounts:login' %}">Sign In</a></li>
+                                    <li><a href="{% url 'rides:home_search' %}">Find Rides</a></li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Services -->
+                    <div class="col-lg-2 col-md-6">
+                        <div class="footer-section">
+                            <h6 class="footer-title">Services</h6>
+                            <ul class="footer-links">
+                                <li><a href="{% url 'accounts:driver_registration_step1' %}">Become a Driver</a></li>
+                                <li><a href="#">Corporate Solutions</a></li>
+                                <li><a href="#">API Integration</a></li>
+                                <li><a href="#">Safety & Insurance</a></li>
+                                <li><a href="#">24/7 Support</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Support -->
+                    <div class="col-lg-2 col-md-6">
+                        <div class="footer-section">
+                            <h6 class="footer-title">Support</h6>
+                            <ul class="footer-links">
+                                <li><a href="#">Help Center</a></li>
+                                <li><a href="#">Safety Guidelines</a></li>
+                                <li><a href="#">Privacy Policy</a></li>
+                                <li><a href="#">Terms of Service</a></li>
+                                <li><a href="#">Contact Us</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Contact & Social -->
+                    <div class="col-lg-2 col-md-6">
+                        <div class="footer-section">
+                            <h6 class="footer-title">Connect</h6>
+                            <div class="footer-contact">
+                                <div class="contact-item">
+                                    <i class="bi bi-envelope-fill"></i>
+                                    <span>support@pointride.ca</span>
+                                </div>
+                                <div class="contact-item">
+                                    <i class="bi bi-telephone-fill"></i>
+                                    <span>1-800-POINT-RIDE</span>
+                                </div>
+                                <div class="contact-item">
+                                    <i class="bi bi-geo-alt-fill"></i>
+                                    <span>Ontario, Canada</span>
+                                </div>
+                            </div>
+                            <div class="footer-social">
+                                <a href="#" class="social-link">
+                                    <i class="bi bi-linkedin"></i>
+                                </a>
+                                <a href="#" class="social-link">
+                                    <i class="bi bi-twitter"></i>
+                                </a>
+                                <a href="#" class="social-link">
+                                    <i class="bi bi-facebook"></i>
+                                </a>
+                                <a href="#" class="social-link">
+                                    <i class="bi bi-instagram"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <div class="footer-bottom-content">
+                    <div class="footer-copyright">
+                        <span>&copy; {% now "Y" %} pointRide. All rights reserved.</span>
+                    </div>
+                    <div class="footer-certifications">
+                        <div class="certification">
+                            <i class="bi bi-shield-check"></i>
+                            <span>SSL Secured</span>
+                        </div>
+                        <div class="certification">
+                            <i class="bi bi-award"></i>
+                            <span>PIPEDA Compliant</span>
+                        </div>
+                        <div class="certification">
+                            <i class="bi bi-patch-check"></i>
+                            <span>Verified Platform</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </footer>
 
     {# JavaScript files #}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="{% static 'js/main.js' %}"></script>
+    
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

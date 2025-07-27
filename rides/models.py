@@ -103,14 +103,20 @@ class Ride(models.Model):
     @property
     def is_full(self):
         """Check if ride is full based on confirmed bookings"""
-        confirmed_bookings = self.bookings.filter(status='CONFIRMED').count()
-        return confirmed_bookings >= self.available_seats
+        # Fixed: Sum the actual seats booked, not count bookings
+        total_booked_seats = self.bookings.filter(status='CONFIRMED').aggregate(
+            total=models.Sum('seats_booked')
+        )['total'] or 0
+        return total_booked_seats >= self.available_seats
     
     @property
     def available_seats_count(self):
-        """Get number of available seats"""
-        confirmed_bookings = self.bookings.filter(status='CONFIRMED').count()
-        return self.available_seats - confirmed_bookings
+        """Get number of available seats - FIXED VERSION"""
+        # Sum the actual seats booked from confirmed bookings
+        total_booked_seats = self.bookings.filter(status='CONFIRMED').aggregate(
+            total=models.Sum('seats_booked')
+        )['total'] or 0
+        return self.available_seats - total_booked_seats
 
 class Booking(models.Model):
     """
