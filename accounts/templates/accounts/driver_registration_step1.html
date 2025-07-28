@@ -8,18 +8,33 @@
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
-            <div class="card shadow-lg border-0 rounded-lg">
+            <div class="card shadow-lg border-0 rounded-3">
                 <div class="card-header bg-success text-white text-center py-4">
-                    <h2 class="h3 mb-0 fw-bold">Become a pointRide Driver</h2>
+                    <h2 class="h3 mb-0 fw-bold">
+                        <i class="bi bi-car-front me-2"></i>
+                        Become a pointRide Driver
+                    </h2>
                 </div>
                 <div class="card-body p-4 p-md-5">
-                    <p class="text-center text-muted mb-4">Start your journey to earning with pointRide. This is step 1 of 4.</p>
+                    <!-- Progress Indicator -->
+                    <div class="progress-container mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted small">Step 1 of 4</span>
+                            <span class="text-success small fw-bold">Basic Information</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 25%"></div>
+                        </div>
+                    </div>
+                    
+                    <p class="text-center text-muted mb-4">Start your journey to earning with pointRide. Complete your basic registration details.</p>
 
-                    <form method="post" id="driverRegistrationForm"> {# Added ID for JS #}
+                    <form method="post" id="driverRegistrationForm">
                         {% csrf_token %}
 
                         {% if form.non_field_errors %}
                             <div class="alert alert-danger" role="alert">
+                                <i class="bi bi-exclamation-circle me-2"></i>
                                 <ul class="mb-0">
                                     {% for error in form.non_field_errors %}
                                         <li>{{ error }}</li>
@@ -30,13 +45,43 @@
 
                         {% for field in form %}
                             <div class="mb-3">
-                                <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
+                                <label for="{{ field.id_for_label }}" class="form-label fw-bold">
+                                    {% if field.name == 'username' %}
+                                        <i class="bi bi-person text-success me-1"></i>
+                                    {% elif field.name == 'email' %}
+                                        <i class="bi bi-envelope text-success me-1"></i>
+                                    {% elif field.name == 'full_legal_name' %}
+                                        <i class="bi bi-person-badge text-success me-1"></i>
+                                    {% elif field.name == 'phone_number' %}
+                                        <i class="bi bi-telephone text-success me-1"></i>
+                                    {% elif field.name == 'password' or field.name == 'password2' %}
+                                        <i class="bi bi-lock text-success me-1"></i>
+                                    {% endif %}
                                     {{ field.label }}
                                     {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
                                 </label>
-                                {{ field }}
+                                
+                                {% if field.name == 'username' %}
+                                    <input type="text" class="form-control form-control-lg" id="{{ field.id_for_label }}" name="{{ field.name }}" value="{{ field.value|default:'' }}" placeholder="Choose a unique username" required>
+                                {% elif field.name == 'email' %}
+                                    <input type="email" class="form-control form-control-lg" id="{{ field.id_for_label }}" name="{{ field.name }}" value="{{ field.value|default:'' }}" placeholder="your.email@example.com" required>
+                                {% elif field.name == 'full_legal_name' %}
+                                    <input type="text" class="form-control form-control-lg" id="{{ field.id_for_label }}" name="{{ field.name }}" value="{{ field.value|default:'' }}" placeholder="Your full legal name" required>
+                                {% elif field.name == 'phone_number' %}
+                                    <input type="tel" class="form-control form-control-lg" id="{{ field.id_for_label }}" name="{{ field.name }}" value="{{ field.value|default:'' }}" placeholder="(123) 456-7890" required>
+                                {% elif field.name == 'password' %}
+                                    <input type="password" class="form-control form-control-lg" id="{{ field.id_for_label }}" name="{{ field.name }}" placeholder="Create a strong password" required>
+                                {% elif field.name == 'password2' %}
+                                    <input type="password" class="form-control form-control-lg" id="{{ field.id_for_label }}" name="{{ field.name }}" placeholder="Confirm your password" required>
+                                {% else %}
+                                    {{ field }}
+                                {% endif %}
+                                
                                 {% if field.help_text %}
-                                    <div class="form-text text-muted">{{ field.help_text }}</div>
+                                    <div class="form-text text-muted">
+                                        <i class="bi bi-info-circle me-1"></i>
+                                        {{ field.help_text }}
+                                    </div>
                                 {% endif %}
                                 {% for error in field.errors %}
                                     <div class="invalid-feedback d-block">{{ error }}</div>
@@ -53,18 +98,96 @@
                         {% endfor %}
 
                         <div class="d-grid mt-4">
-                            <button type="submit" class="btn btn-success btn-lg">Next: License Verification</button>
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-arrow-right me-2"></i>
+                                Next: License Verification
+                            </button>
                         </div>
                     </form>
 
-                    <p class="text-center text-muted mt-4 mb-0">
-                        Already registered as a driver? <a href="{% url 'accounts:login' %}" class="text-success fw-semibold">Login here</a>.
-                    </p>
+                    <div class="text-center mt-4">
+                        <p class="text-muted mb-2">Already registered as a driver?</p>
+                        <a href="{% url 'accounts:login' %}" class="btn btn-outline-success">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>
+                            Login here
+                        </a>
+                        <p class="mt-3 mb-0">
+                            <span class="text-muted">Just looking for rides?</span>
+                            <a href="{% url 'accounts:traveller_register' %}" class="text-primary fw-semibold">
+                                <i class="bi bi-person-walking me-1"></i>
+                                Register as Traveller
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Benefits Section -->
+            <div class="mt-4">
+                <div class="card border-0 bg-light">
+                    <div class="card-body text-center py-4">
+                        <h5 class="text-success mb-3">
+                            <i class="bi bi-star-fill me-2"></i>
+                            Why Drive with pointRide?
+                        </h5>
+                        <div class="row g-3">
+                            <div class="col-4">
+                                <div class="text-success">
+                                    <i class="bi bi-currency-dollar fs-3"></i>
+                                    <p class="small mb-0 mt-1 fw-bold">Earn Money</p>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="text-success">
+                                    <i class="bi bi-clock fs-3"></i>
+                                    <p class="small mb-0 mt-1 fw-bold">Flexible Hours</p>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="text-success">
+                                    <i class="bi bi-shield-check fs-3"></i>
+                                    <p class="small mb-0 mt-1 fw-bold">Safe Platform</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+.progress {
+    border-radius: 10px;
+    background-color: #e9ecef;
+}
+
+.progress-bar {
+    border-radius: 10px;
+}
+
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.btn {
+    transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.form-control:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+
+.form-control-lg {
+    padding: 0.75rem 1rem;
+}
+</style>
 {% endblock %}
 
 {% block extra_js %}

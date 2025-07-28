@@ -3,21 +3,41 @@
 
 {% block content %}
 <div class="container py-5">
-    <h1>My Bookings</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-primary">
+            <i class="bi bi-bookmark-check-fill me-2"></i>
+            My Bookings
+        </h1>
+        <a href="{% url 'rides:home_search' %}" class="btn btn-success">
+            <i class="bi bi-search me-1"></i>
+            Find New Ride
+        </a>
+    </div>
     
     {% if bookings %}
-        <p>You have {{ bookings|length }} booking{{ bookings|length|pluralize }}:</p>
+        <div class="alert alert-info mb-4">
+            <i class="bi bi-info-circle me-2"></i>
+            You have {{ bookings|length }} booking{{ bookings|length|pluralize }}
+        </div>
         
         {% for booking in bookings %}
-        <div class="card mb-3">
+        <div class="card mb-3 shadow-sm border-0 rounded-3">
             <div class="card-body">
                 <div class="row align-items-center">
                     <div class="col-md-8">
-                        <h5 class="card-title">{{ booking.ride.pickup_city }} → {{ booking.ride.dropoff_city }}</h5>
+                        <h5 class="card-title text-primary">
+                            {{ booking.ride.pickup_city }} 
+                            <i class="bi bi-arrow-right mx-2"></i>
+                            {{ booking.ride.dropoff_city }}
+                        </h5>
                         <p class="card-text">
+                            <i class="bi bi-person-fill text-muted me-1"></i>
                             <strong>Driver:</strong> {{ booking.ride.driver.full_legal_name }}<br>
+                            <i class="bi bi-calendar-event text-muted me-1"></i>
                             <strong>Date:</strong> {{ booking.ride.departure_date }} at {{ booking.ride.departure_time }}<br>
+                            <i class="bi bi-people text-muted me-1"></i>
                             <strong>Seats Booked:</strong> {{ booking.seats_booked }}<br>
+                            <i class="bi bi-info-circle text-muted me-1"></i>
                             <strong>Status:</strong> 
                             {% if booking.status == 'CONFIRMED' %}
                                 <span class="badge bg-success">{{ booking.status }}</span>
@@ -31,25 +51,56 @@
                         </p>
                     </div>
                     <div class="col-md-4 text-end">
-                        <h5 class="text-primary">${{ booking.total_price }}</h5>
-                        <p class="text-muted">Total cost</p>
-                        <a href="{% url 'rides:booking_detail' booking.id %}" class="btn btn-primary btn-sm">View Booking</a>
+                        <h4 class="text-success mb-2">${{ booking.total_price }}</h4>
+                        <p class="text-muted small">Total cost</p>
+                        <a href="{% url 'rides:booking_detail' booking.id %}" class="btn btn-primary">
+                            <i class="bi bi-eye me-1"></i>
+                            View Booking
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
         {% endfor %}
     {% else %}
-        <div class="alert alert-info">
+        <div class="alert alert-info text-center">
+            <i class="bi bi-exclamation-circle display-1 text-info mb-3"></i>
             <h4>No bookings yet</h4>
-            <p>You haven't booked any rides yet. Start exploring rides available in Ontario!</p>
-            <a href="{% url 'rides:home_search' %}" class="btn btn-primary">Find Your First Ride</a>
+            <p class="mb-3">You haven't booked any rides yet. Start exploring rides available in Ontario!</p>
+            <a href="{% url 'rides:home_search' %}" class="btn btn-primary btn-lg">
+                <i class="bi bi-search me-2"></i>
+                Find Your First Ride
+            </a>
         </div>
     {% endif %}
     
-    <div class="mt-3">
-        <a href="{% url 'accounts:traveller_dashboard' %}" class="btn btn-secondary">← Back to Dashboard</a>
-        <a href="{% url 'rides:home_search' %}" class="btn btn-success">+ Find New Ride</a>
+    <div class="mt-4">
+        <a href="{% url 'accounts:traveller_dashboard' %}" class="btn btn-secondary me-2">
+            <i class="bi bi-arrow-left me-1"></i>
+            Back to Dashboard
+        </a>
+        <a href="{% url 'rides:home_search' %}" class="btn btn-outline-success">
+            <i class="bi bi-plus-circle me-1"></i>
+            Find New Ride
+        </a>
     </div>
 </div>
+
+<style>
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.btn {
+    transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+</style>
 {% endblock %}

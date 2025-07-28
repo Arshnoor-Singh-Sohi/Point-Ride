@@ -6,128 +6,246 @@
 {% block content %}
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Edit Your Profile</h4>
+        <div class="col-md-10">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h2 class="h3 mb-0 fw-bold">
+                        <i class="bi bi-person-gear me-2"></i>
+                        Edit Your Profile
+                    </h2>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-4">
 
-                    <!-- === User Form === -->
+                    <!-- Personal Information Form -->
                     <form method="post" enctype="multipart/form-data" action="">
                         {% csrf_token %}
                         <div class="mb-4">
-                            <h5 class="border-bottom pb-2">Personal Information</h5>
-                            <div class="row g-3 mt-2">
+                            <h5 class="text-primary border-bottom pb-2 mb-3">
+                                <i class="bi bi-person-circle me-2"></i>
+                                Personal Information
+                            </h5>
+                            <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label for="id_full_legal_name" class="form-label">Full Legal Name</label>
-                                    <input type="text" class="form-control" id="id_full_legal_name" name="full_legal_name"
-                                           value="{{ user.full_legal_name }}">
+                                    <label for="id_full_legal_name" class="form-label fw-bold">
+                                        <i class="bi bi-person-badge text-primary me-1"></i>
+                                        Full Legal Name
+                                    </label>
+                                    <input type="text" class="form-control form-control-lg" id="id_full_legal_name" 
+                                           name="full_legal_name" value="{{ user.full_legal_name }}" 
+                                           placeholder="Your full legal name">
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="id_email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="id_email_display" value="{{ user.email }}" disabled>
+                                    <label for="id_email" class="form-label fw-bold">
+                                        <i class="bi bi-envelope text-primary me-1"></i>
+                                        Email Address
+                                    </label>
+                                    <input type="email" class="form-control form-control-lg" id="id_email_display" 
+                                           value="{{ user.email }}" disabled>
                                     <input type="hidden" name="email" value="{{ user.email }}">
+                                    <small class="text-muted">
+                                        <i class="bi bi-info-circle me-1"></i>
+                                        Email cannot be changed here
+                                    </small>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="id_phone_number" class="form-label">Phone Number</label>
-                                    <input type="tel" class="form-control" id="id_phone_number" name="phone_number"
-                                           value="{{ user.phone_number }}">
+                                    <label for="id_phone_number" class="form-label fw-bold">
+                                        <i class="bi bi-telephone text-primary me-1"></i>
+                                        Phone Number
+                                    </label>
+                                    <input type="tel" class="form-control form-control-lg" id="id_phone_number" 
+                                           name="phone_number" value="{{ user.phone_number }}" 
+                                           placeholder="(123) 456-7890">
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="id_profile_picture" class="form-label">Profile Picture</label>
-                                    <input type="file" class="form-control" id="id_profile_picture" name="profile_picture">
+                                    <label for="id_profile_picture" class="form-label fw-bold">
+                                        <i class="bi bi-camera text-primary me-1"></i>
+                                        Profile Picture
+                                    </label>
+                                    <input type="file" class="form-control form-control-lg" id="id_profile_picture" 
+                                           name="profile_picture" accept="image/*">
                                     {% if user.profile_picture %}
                                         <div class="mt-2 d-flex align-items-center gap-2">
-                                            <img src="{{ user.profile_picture.url }}" alt="Current Profile" style="width: 40px; height: 40px; object-fit: cover; border-radius: 5px;">
+                                            <img src="{{ user.profile_picture.url }}" alt="Current Profile" 
+                                                 class="rounded-circle border" style="width: 50px; height: 50px; object-fit: cover;">
                                             <small class="text-muted">Current Picture</small>
                                         </div>
                                     {% endif %}
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="id_current_home_address" class="form-label">Home Address</label>
-                                    <input type="text" class="form-control" id="id_current_home_address" name="current_home_address"
-                                           value="{{ user.current_home_address }}">
+                                    <label for="id_current_home_address" class="form-label fw-bold">
+                                        <i class="bi bi-house text-primary me-1"></i>
+                                        Home Address
+                                    </label>
+                                    <input type="text" class="form-control form-control-lg" id="id_current_home_address" 
+                                           name="current_home_address" value="{{ user.current_home_address }}" 
+                                           placeholder="Your home address">
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="id_starting_city" class="form-label">Starting City</label>
-                                    <input type="text" class="form-control" id="id_starting_city" name="starting_city"
-                                           value="{{ user.starting_city }}">
+                                    <label for="id_starting_city" class="form-label fw-bold">
+                                        <i class="bi bi-geo-alt text-primary me-1"></i>
+                                        Starting City
+                                    </label>
+                                    <input type="text" class="form-control form-control-lg" id="id_starting_city" 
+                                           name="starting_city" value="{{ user.starting_city }}" 
+                                           placeholder="Your primary city">
                                 </div>
                                 <div class="col-12">
-                                    <label for="id_bio" class="form-label">Bio</label>
-                                    <textarea class="form-control" id="id_bio" name="bio" rows="3">{{ user.bio }}</textarea>
+                                    <label for="id_bio" class="form-label fw-bold">
+                                        <i class="bi bi-chat-left-text text-primary me-1"></i>
+                                        Bio
+                                    </label>
+                                    <textarea class="form-control" id="id_bio" name="bio" rows="3" 
+                                              placeholder="Tell others about yourself...">{{ user.bio }}</textarea>
                                 </div>
                                 <div class="col-12">
-                                    <label for="id_languages_spoken" class="form-label">Languages Spoken (comma separated)</label>
-                                    <input type="text" class="form-control" id="id_languages_spoken" name="languages_spoken"
-                                           value="{{ user.languages_spoken|join:', ' }}">
+                                    <label for="id_languages_spoken" class="form-label fw-bold">
+                                        <i class="bi bi-translate text-primary me-1"></i>
+                                        Languages Spoken
+                                    </label>
+                                    <input type="text" class="form-control form-control-lg" id="id_languages_spoken" 
+                                           name="languages_spoken" value="{{ user.languages_spoken|join:', ' }}" 
+                                           placeholder="English, French, Spanish...">
+                                    <small class="text-muted">
+                                        <i class="bi bi-info-circle me-1"></i>
+                                        Separate multiple languages with commas
+                                    </small>
                                 </div>
                             </div>
                         </div>
 
                         <div class="d-flex justify-content-end">
-                            <button type="submit" class="btn btn-primary">Save Personal Info</button>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-circle me-2"></i>
+                                Save Personal Info
+                            </button>
                         </div>
                     </form>
 
-                    <!-- === Driver Form === -->
+                    <!-- Driver Information Form -->
                     {% if user.is_driver and driver_profile %}
-                    <hr class="my-4">
+                    <hr class="my-5">
                     <form method="post" action="{% url 'accounts:update_driver' %}">
                         {% csrf_token %}
                         <div class="mb-4">
-                            <h5 class="border-bottom pb-2">Driver Information</h5>
-                            <div class="row g-3 mt-2">
+                            <h5 class="text-success border-bottom pb-2 mb-3">
+                                <i class="bi bi-car-front me-2"></i>
+                                Driver Information
+                            </h5>
+                            <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label for="id_license_number" class="form-label">License Number</label>
-                                    <input type="text" class="form-control" id="id_license_number" name="license_number"
-                                           value="{{ driver_profile.license_number }}">
+                                    <label for="id_license_number" class="form-label fw-bold">
+                                        <i class="bi bi-credit-card text-success me-1"></i>
+                                        License Number
+                                    </label>
+                                    <input type="text" class="form-control form-control-lg" id="id_license_number" 
+                                           name="license_number" value="{{ driver_profile.license_number }}" 
+                                           placeholder="Your license number">
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="id_license_expiry_date" class="form-label">License Expiry Date</label>
-                                    <input type="date" class="form-control" id="id_license_expiry_date" name="license_expiry_date"
-                                           value="{{ driver_profile.license_expiry_date|date:'Y-m-d' }}">
+                                    <label for="id_license_expiry_date" class="form-label fw-bold">
+                                        <i class="bi bi-calendar-check text-success me-1"></i>
+                                        License Expiry Date
+                                    </label>
+                                    <input type="date" class="form-control form-control-lg" id="id_license_expiry_date" 
+                                           name="license_expiry_date" value="{{ driver_profile.license_expiry_date|date:'Y-m-d' }}">
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="id_vehicle_make" class="form-label">Vehicle Make</label>
-                                    <input type="text" class="form-control" id="id_vehicle_make" name="vehicle_make"
-                                           value="{{ driver_profile.vehicle_make }}">
+                                <div class="col-md-4">
+                                    <label for="id_vehicle_make" class="form-label fw-bold">
+                                        <i class="bi bi-truck text-success me-1"></i>
+                                        Vehicle Make
+                                    </label>
+                                    <input type="text" class="form-control form-control-lg" id="id_vehicle_make" 
+                                           name="vehicle_make" value="{{ driver_profile.vehicle_make }}" 
+                                           placeholder="Toyota, Honda, etc.">
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="id_vehicle_model" class="form-label">Vehicle Model</label>
-                                    <input type="text" class="form-control" id="id_vehicle_model" name="vehicle_model"
-                                           value="{{ driver_profile.vehicle_model }}">
+                                <div class="col-md-4">
+                                    <label for="id_vehicle_model" class="form-label fw-bold">
+                                        <i class="bi bi-car-front-fill text-success me-1"></i>
+                                        Vehicle Model
+                                    </label>
+                                    <input type="text" class="form-control form-control-lg" id="id_vehicle_model" 
+                                           name="vehicle_model" value="{{ driver_profile.vehicle_model }}" 
+                                           placeholder="Camry, Civic, etc.">
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="id_vehicle_year" class="form-label">Vehicle Year</label>
-                                    <input type="number" class="form-control" id="id_vehicle_year" name="vehicle_year"
-                                           value="{{ driver_profile.vehicle_year }}">
+                                <div class="col-md-4">
+                                    <label for="id_vehicle_year" class="form-label fw-bold">
+                                        <i class="bi bi-calendar text-success me-1"></i>
+                                        Vehicle Year
+                                    </label>
+                                    <input type="number" class="form-control form-control-lg" id="id_vehicle_year" 
+                                           name="vehicle_year" value="{{ driver_profile.vehicle_year }}" 
+                                           placeholder="2020" min="1990" max="2025">
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="id_vehicle_registration_number" class="form-label">Registration Number</label>
-                                    <input type="text" class="form-control" id="id_vehicle_registration_number" name="vehicle_registration_number"
-                                           value="{{ driver_profile.vehicle_registration_number }}">
+                                <div class="col-12">
+                                    <label for="id_vehicle_registration_number" class="form-label fw-bold">
+                                        <i class="bi bi-file-text text-success me-1"></i>
+                                        Vehicle Registration Number
+                                    </label>
+                                    <input type="text" class="form-control form-control-lg" id="id_vehicle_registration_number" 
+                                           name="vehicle_registration_number" value="{{ driver_profile.vehicle_registration_number }}" 
+                                           placeholder="Your vehicle registration number">
                                 </div>
                             </div>
                         </div>
 
                         <div class="d-flex justify-content-end">
-                            <button type="submit" class="btn btn-warning">Save Driver Info</button>
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-check-circle me-2"></i>
+                                Save Driver Info
+                            </button>
                         </div>
                     </form>
                     {% endif %}
 
-                    <!-- Cancel Button -->
-                    <div class="d-flex justify-content-start mt-4">
+                    <!-- Action Buttons -->
+                    <div class="d-flex justify-content-between align-items-center mt-5 pt-3 border-top">
                         <a href="{% if user.is_driver %}{% url 'accounts:driver_dashboard' %}{% else %}{% url 'accounts:traveller_dashboard' %}{% endif %}"
-                           class="btn btn-outline-secondary">
-                            Cancel
+                           class="btn btn-outline-secondary btn-lg">
+                            <i class="bi bi-arrow-left me-2"></i>
+                            Back to Dashboard
                         </a>
+                        
+                        <div class="text-muted small">
+                            <i class="bi bi-shield-check me-1"></i>
+                            Your information is secure and encrypted
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.btn {
+    transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.form-control-lg {
+    padding: 0.75rem 1rem;
+}
+
+.rounded-circle {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+input[disabled] {
+    background-color: #f8f9fa;
+    color: #6c757d;
+}
+</style>
 {% endblock %}

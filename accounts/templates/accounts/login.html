@@ -8,19 +8,23 @@
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
-            <div class="card shadow-lg border-0 rounded-lg">
+            <div class="card shadow-lg border-0 rounded-3">
                 <div class="card-header bg-primary text-white text-center py-4">
-                    <h2 class="h3 mb-0 fw-bold">Login</h2>
+                    <h2 class="h3 mb-0 fw-bold">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>
+                        Welcome Back
+                    </h2>
                 </div>
                 <div class="card-body p-4 p-md-5">
                     <p class="text-center text-muted mb-4">Choose your role and log in to pointRide</p>
 
-                    {# MODIFIED BLOCK TO DISPLAY ONLY ERROR MESSAGES #}
+                    {# Display error messages #}
                     {% if messages %}
                         <div class="messages-container mb-3">
                             {% for message in messages %}
-                                {% if message.tags == 'error' %} {# Check if the message is tagged as 'error' #}
+                                {% if message.tags == 'error' %}
                                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
                                     {{ message }}
                                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
@@ -28,13 +32,13 @@
                             {% endfor %}
                         </div>
                     {% endif %}
-                    {# END OF MODIFIED BLOCK #}
 
                     <form method="post" id="loginForm">
                         {% csrf_token %}
 
                         {% if form.non_field_errors %}
                             <div class="alert alert-danger" role="alert">
+                                <i class="bi bi-exclamation-circle me-2"></i>
                                 <ul class="mb-0">
                                     {% for error in form.non_field_errors %}
                                         <li>{{ error }}</li>
@@ -45,51 +49,155 @@
 
                         {% for field in form %}
                             <div class="mb-3">
-                                <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
+                                <label for="{{ field.id_for_label }}" class="form-label fw-bold">
+                                    {% if field.name == 'username' %}
+                                        <i class="bi bi-person text-primary me-1"></i>
+                                    {% elif field.name == 'password' %}
+                                        <i class="bi bi-lock text-primary me-1"></i>
+                                    {% endif %}
                                     {{ field.label }}
                                     {% if field.field.required %}
                                         <span class="text-danger">*</span>
                                     {% endif %}
                                 </label>
-                                {{ field }}
+                                {% if field.name == 'username' %}
+                                    <input type="text" class="form-control form-control-lg" id="{{ field.id_for_label }}" name="{{ field.name }}" value="{{ field.value|default:'' }}" placeholder="Enter your username" required>
+                                {% elif field.name == 'password' %}
+                                    <input type="password" class="form-control form-control-lg" id="{{ field.id_for_label }}" name="{{ field.name }}" placeholder="Enter your password" required>
+                                {% else %}
+                                    {{ field }}
+                                {% endif %}
                                 {% for error in field.errors %}
                                     <div class="invalid-feedback d-block">{{ error }}</div>
                                 {% endfor %}
                             </div>
                         {% endfor %}
 
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Login as</label><br>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="login_role" id="traveller" value="traveller" required>
-                                <label class="form-check-label" for="traveller">Traveller</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="login_role" id="driver" value="driver">
-                                <label class="form-check-label" for="driver">Driver</label>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="bi bi-person-badge text-primary me-1"></i>
+                                Login as
+                            </label>
+                            <div class="row g-2 mt-1">
+                                <div class="col-6">
+                                    <div class="form-check-card">
+                                        <input class="form-check-input" type="radio" name="login_role" id="traveller" value="traveller" required>
+                                        <label class="form-check-label-card" for="traveller">
+                                            <i class="bi bi-person-walking"></i>
+                                            <span>Traveller</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-check-card">
+                                        <input class="form-check-input" type="radio" name="login_role" id="driver" value="driver">
+                                        <label class="form-check-label-card" for="driver">
+                                            <i class="bi bi-car-front"></i>
+                                            <span>Driver</span>
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
                         <div class="d-grid mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg">Login</button>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>
+                                Login
+                            </button>
                         </div>
                     </form>
 
-                    <p class="text-center text-muted mt-4 mb-0">
-                        Don’t have an account?
-                        <a href="{% url 'accounts:traveller_register' %}" class="text-primary fw-semibold">
-                            Register as Traveller
-                        </a> |
-                        <a href="{% url 'accounts:driver_registration_step1' %}" class="text-primary fw-semibold">
-                            Register as Driver
-                        </a> |
-                        <a href="{% url 'password_reset' %}" class="text-primary fw-semibold">Forgot Password?</a>
-                    </p>
+                    <div class="text-center mt-4">
+                        <p class="text-muted mb-2">Don't have an account?</p>
+                        <div class="d-flex justify-content-center gap-2 flex-wrap">
+                            <a href="{% url 'accounts:traveller_register' %}" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-person-plus me-1"></i>
+                                Register as Traveller
+                            </a>
+                            <a href="{% url 'accounts:driver_registration_step1' %}" class="btn btn-outline-success btn-sm">
+                                <i class="bi bi-car-front me-1"></i>
+                                Register as Driver
+                            </a>
+                        </div>
+                        <p class="mt-3 mb-0">
+                            <a href="{% url 'password_reset' %}" class="text-primary fw-semibold">
+                                <i class="bi bi-key me-1"></i>
+                                Forgot Password?
+                            </a>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+.form-check-card {
+    position: relative;
+}
+
+.form-check-card .form-check-input {
+    position: absolute;
+    opacity: 0;
+}
+
+.form-check-label-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    background: white;
+}
+
+.form-check-label-card i {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #6c757d;
+}
+
+.form-check-label-card span {
+    font-weight: 600;
+    color: #495057;
+}
+
+.form-check-input:checked + .form-check-label-card {
+    border-color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.1);
+}
+
+.form-check-input:checked + .form-check-label-card i,
+.form-check-input:checked + .form-check-label-card span {
+    color: #0d6efd;
+}
+
+.form-check-label-card:hover {
+    border-color: #0d6efd;
+    transform: translateY(-1px);
+}
+
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.btn {
+    transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+</style>
 {% endblock %}
 
 {% block extra_js %}

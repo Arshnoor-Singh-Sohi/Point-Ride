@@ -13,12 +13,15 @@ import os
 from pathlib import Path
 from decouple import config, Csv  # Import decouple for environment variables
 
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # STATIC_URL = 'static/'
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_build', 'static')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
@@ -33,10 +36,16 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-8$ydc#0bqfrzbi-7b+lwv
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # Read DEBUG from environment variable, defaults to True for development
-DEBUG = config('DEBUG', default=True, cast=bool)
+# DEBUG = config('DEBUG', default=True, cast=bool)
 
 # Read ALLOWED_HOSTS from environment variable as a comma-separated list
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,testserver', cast=Csv())
+# ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,testserver', cast=Csv())
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '.vercel.app',  # This allows all Vercel subdomains
+    'your-custom-domain.com'  # Add your custom domain if you have one
+]
 
 # Google Maps API Configuration
 # This is the key setting you need for your maps functionality
@@ -89,10 +98,16 @@ WSGI_APPLICATION = 'pointRide.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# Database configuration for external database
+# You'll need to replace SQLite with PostgreSQL or another external database
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }
 
@@ -198,3 +213,11 @@ SESSION_SAVE_EVERY_REQUEST = True
 # SECURE_HSTS_SECONDS = 31536000
 # SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 # SECURE_HSTS_PRELOAD = True
+
+# Security settings for production
+if not DEBUG:
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True

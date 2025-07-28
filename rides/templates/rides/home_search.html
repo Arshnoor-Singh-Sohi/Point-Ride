@@ -5,30 +5,45 @@
 {% block content %}
 <div class="container py-5">
     <div class="text-center mb-5">
-        <h1>Where do you want to go?</h1>
-        <p class="text-muted">Find rides across Ontario</p>
+        <h1 class="display-4 text-primary mb-3">
+            <i class="bi bi-geo-alt-fill me-3"></i>
+            Where do you want to go?
+        </h1>
+        <p class="lead text-muted">Find rides across Ontario</p>
     </div>
     
     <!-- Search Form -->
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card shadow">
-                <div class="card-body">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h4 class="mb-0">
+                        <i class="bi bi-search me-2"></i>
+                        Search for Rides
+                    </h4>
+                </div>
+                <div class="card-body p-4">
                     <form method="post" action="{% url 'rides:search_rides' %}">
                         {% csrf_token %}
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label>From</label>
-                                <select name="pickup_city" class="form-control" required>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">
+                                    <i class="bi bi-geo-alt text-primary me-1"></i>
+                                    From
+                                </label>
+                                <select name="pickup_city" class="form-select form-select-lg" required>
                                     <option value="">Select pickup city</option>
                                     {% for city in cities %}
                                         <option value="{{ city.id }}">{{ city.name }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label>To</label>
-                                <select name="dropoff_city" class="form-control" required>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">
+                                    <i class="bi bi-geo-alt-fill text-primary me-1"></i>
+                                    To
+                                </label>
+                                <select name="dropoff_city" class="form-select form-select-lg" required>
                                     <option value="">Select destination</option>
                                     {% for city in cities %}
                                         <option value="{{ city.id }}">{{ city.name }}</option>
@@ -36,13 +51,19 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label>Departure Date</label>
-                                <input type="date" name="departure_date" class="form-control" required min="{{ today|date:'Y-m-d' }}">
+                        <div class="row g-3 mt-2">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">
+                                    <i class="bi bi-calendar-date text-primary me-1"></i>
+                                    Departure Date
+                                </label>
+                                <input type="date" name="departure_date" class="form-control form-control-lg" required min="{{ today|date:'Y-m-d' }}">
                             </div>
-                            <div class="col-md-6 mb-3 d-flex align-items-end">
-                                <button type="submit" class="btn btn-primary w-100">Search Rides</button>
+                            <div class="col-md-6 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary btn-lg w-100">
+                                    <i class="bi bi-search me-2"></i>
+                                    Search Rides
+                                </button>
                             </div>
                         </div>
                     </form>
@@ -54,16 +75,38 @@
     <!-- Recent Rides -->
     {% if recent_rides %}
     <div class="mt-5">
-        <h3>Recent Rides</h3>
+        <h3 class="text-center mb-4">
+            <i class="bi bi-clock-history text-primary me-2"></i>
+            Recent Rides
+        </h3>
         <div class="row">
             {% for ride in recent_rides %}
             <div class="col-md-6 mb-3">
-                <div class="card">
+                <div class="card h-100 shadow-sm border-0 rounded-3">
                     <div class="card-body">
-                        <h5>{{ ride.pickup_city }} → {{ ride.dropoff_city }}</h5>
-                        <p><small class="text-muted">{{ ride.departure_date }} at {{ ride.departure_time }}</small></p>
-                        <p><strong>${{ ride.price_per_seat }}</strong> per seat | {{ ride.available_seats_count }} seats left</p>
-                        <a href="{% url 'rides:ride_detail' ride.id %}" class="btn btn-sm btn-outline-primary">View Details</a>
+                        <h5 class="card-title text-primary">
+                            {{ ride.pickup_city }} 
+                            <i class="bi bi-arrow-right mx-2"></i>
+                            {{ ride.dropoff_city }}
+                        </h5>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                <i class="bi bi-calendar-event me-1"></i>
+                                {{ ride.departure_date }} at {{ ride.departure_time }}
+                            </small>
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong class="text-success fs-5">${{ ride.price_per_seat }}</strong>
+                                <small class="text-muted">per seat</small>
+                            </div>
+                            <div>
+                                <span class="badge bg-info">{{ ride.available_seats_count }} seats left</span>
+                            </div>
+                        </div>
+                        <a href="{% url 'rides:ride_detail' ride.id %}" class="btn btn-outline-primary btn-sm mt-2 w-100">
+                            View Details
+                        </a>
                     </div>
                 </div>
             </div>
@@ -72,4 +115,28 @@
     </div>
     {% endif %}
 </div>
+
+<style>
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.form-select:focus,
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.btn-primary {
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+}
+</style>
 {% endblock %}

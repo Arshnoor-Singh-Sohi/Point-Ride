@@ -4,34 +4,62 @@
 
 {% block content %}
 <div class="container py-5">
-    <h1>My Rides</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-primary">
+            <i class="bi bi-car-front-fill me-2"></i>
+            My Rides
+        </h1>
+        <a href="{% url 'rides:create_ride' %}" class="btn btn-success">
+            <i class="bi bi-plus-circle me-1"></i>
+            Create New Ride
+        </a>
+    </div>
     
     <!-- Booking Requests -->
     {% if pending_bookings %}
-    <div class="alert alert-warning">
-        <h3>Pending Booking Requests ({{ pending_bookings|length }})</h3>
+    <div class="alert alert-warning shadow-sm rounded-3 mb-4">
+        <h4 class="alert-heading">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            Pending Booking Requests ({{ pending_bookings|length }})
+        </h4>
         <p>These passengers want to book your rides:</p>
         
         {% for booking in pending_bookings %}
-        <div class="card mb-3">
+        <div class="card mb-3 border-warning">
             <div class="card-body">
-                <h5>{{ booking.ride.pickup_city }} → {{ booking.ride.dropoff_city }}</h5>
-                <p>
-                    <strong>Passenger:</strong> {{ booking.traveller.full_legal_name }}<br>
-                    <strong>Seats:</strong> {{ booking.seats_booked }}<br>
-                    <strong>Payment:</strong> ${{ booking.total_price }}<br>
-                    <strong>Date:</strong> {{ booking.ride.departure_date }}
-                </p>
-                <form method="post" action="{% url 'rides:booking_detail' booking.id %}" class="d-inline">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="confirm">
-                    <button type="submit" class="btn btn-success">Confirm</button>
-                </form>
-                <form method="post" action="{% url 'rides:booking_detail' booking.id %}" class="d-inline">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="reject">
-                    <button type="submit" class="btn btn-danger">Reject</button>
-                </form>
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h5 class="card-title text-primary">
+                            {{ booking.ride.pickup_city }} 
+                            <i class="bi bi-arrow-right mx-2"></i>
+                            {{ booking.ride.dropoff_city }}
+                        </h5>
+                        <p class="card-text">
+                            <strong>Passenger:</strong> {{ booking.traveller.full_legal_name }}<br>
+                            <strong>Seats:</strong> {{ booking.seats_booked }}<br>
+                            <strong>Payment:</strong> <span class="text-success fw-bold">${{ booking.total_price }}</span><br>
+                            <strong>Date:</strong> {{ booking.ride.departure_date }}
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <form method="post" action="{% url 'rides:booking_detail' booking.id %}" class="d-inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="confirm">
+                            <button type="submit" class="btn btn-success me-2">
+                                <i class="bi bi-check-circle me-1"></i>
+                                Confirm
+                            </button>
+                        </form>
+                        <form method="post" action="{% url 'rides:booking_detail' booking.id %}" class="d-inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="reject">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-x-circle me-1"></i>
+                                Reject
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
         {% endfor %}
@@ -39,32 +67,84 @@
     {% endif %}
     
     <!-- My Rides -->
-    <h3>My Posted Rides</h3>
+    <h3 class="mb-3">
+        <i class="bi bi-list-check text-primary me-2"></i>
+        My Posted Rides
+    </h3>
     {% if rides %}
         {% for ride in rides %}
-        <div class="card mb-3">
+        <div class="card mb-3 shadow-sm border-0 rounded-3">
             <div class="card-body">
-                <div class="row">
+                <div class="row align-items-center">
                     <div class="col-md-8">
-                        <h5>{{ ride.pickup_city }} → {{ ride.dropoff_city }}</h5>
-                        <p>
+                        <h5 class="card-title text-primary">
+                            {{ ride.pickup_city }} 
+                            <i class="bi bi-arrow-right mx-2"></i>
+                            {{ ride.dropoff_city }}
+                        </h5>
+                        <p class="card-text">
+                            <i class="bi bi-calendar-event text-muted me-1"></i>
                             <strong>Date:</strong> {{ ride.departure_date }} at {{ ride.departure_time }}<br>
-                            <strong>Status:</strong> {{ ride.status }}<br>
+                            <i class="bi bi-info-circle text-muted me-1"></i>
+                            <strong>Status:</strong> 
+                            {% if ride.status == 'ACTIVE' %}
+                                <span class="badge bg-success">{{ ride.status }}</span>
+                            {% elif ride.status == 'FULL' %}
+                                <span class="badge bg-warning">{{ ride.status }}</span>
+                            {% elif ride.status == 'COMPLETED' %}
+                                <span class="badge bg-info">{{ ride.status }}</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ ride.status }}</span>
+                            {% endif %}<br>
+                            <i class="bi bi-people text-muted me-1"></i>
                             <strong>Seats Left:</strong> {{ ride.available_seats_count }}
                         </p>
                     </div>
-                    <div class="col-md-4">
-                        <h5>${{ ride.price_per_seat }}/seat</h5>
-                        <a href="{% url 'rides:ride_detail' ride.id %}" class="btn btn-primary">View Details</a>
+                    <div class="col-md-4 text-end">
+                        <h4 class="text-success mb-2">${{ ride.price_per_seat }}/seat</h4>
+                        <a href="{% url 'rides:ride_detail' ride.id %}" class="btn btn-primary">
+                            <i class="bi bi-eye me-1"></i>
+                            View Details
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
         {% endfor %}
     {% else %}
-        <p>No rides yet. <a href="{% url 'rides:create_ride' %}">Create your first ride</a></p>
+        <div class="alert alert-info text-center">
+            <h4>No rides yet</h4>
+            <p>You haven't created any rides yet. Start earning by offering rides!</p>
+            <a href="{% url 'rides:create_ride' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1"></i>
+                Create your first ride
+            </a>
+        </div>
     {% endif %}
     
-    <a href="{% url 'accounts:driver_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+    <div class="mt-4">
+        <a href="{% url 'accounts:driver_dashboard' %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left me-1"></i>
+            Back to Dashboard
+        </a>
+    </div>
 </div>
+
+<style>
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.btn {
+    transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+</style>
 {% endblock %}
