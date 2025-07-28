@@ -79,6 +79,13 @@ def create_ride(request):
     
     cities = City.objects.filter(is_active=True).order_by('name')
     
+    # Create the context once and reuse it - this ensures consistency
+    context = {
+        'cities': cities,
+        'today': date.today(),
+        'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY,
+    }
+    
     if request.method == 'POST':
         pickup_city_id = request.POST.get('pickup_city')
         dropoff_city_id = request.POST.get('dropoff_city')
@@ -94,11 +101,11 @@ def create_ride(request):
         if not all([pickup_city_id, dropoff_city_id, pickup_location, dropoff_location, 
                    departure_date, departure_time, available_seats, price_per_seat]):
             messages.error(request, "Please fill in all required fields")
-            return render(request, 'rides/create_ride.html', {'cities': cities})
+            return render(request, 'rides/create_ride.html', context)  # Now consistent!
         
         if pickup_city_id == dropoff_city_id:
             messages.error(request, "Pickup and drop-off cities must be different")
-            return render(request, 'rides/create_ride.html', {'cities': cities})
+            return render(request, 'rides/create_ride.html', context)  # Now consistent!
         
         try:
             pickup_city = City.objects.get(id=pickup_city_id)
@@ -133,8 +140,11 @@ def create_ride(request):
             
         except (ValueError, City.DoesNotExist) as e:
             messages.error(request, f"Error creating ride: {str(e)}")
+            return render(request, 'rides/create_ride.html', context)  # Now consistent!
     
-    return render(request, 'rides/create_ride.html', {'cities': cities})
+    # GET request - now this includes the API key too!
+    return render(request, 'rides/create_ride.html', context)
+
 
 def ride_detail(request, ride_id):
     """
